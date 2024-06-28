@@ -1,9 +1,12 @@
+/**
+ * MyClass is a class to handle the assignment 1 functionality of evaluating the next location of an action.
+ */
 public class MyClass {
-
-//    public static char getNextLocation() {
-//
-//    }
-
+    /**
+     * Gets the index of a character.
+     * @param current_location: Character to find the index of.
+     * @return Integer value of the character's location index.
+     */
     public static int getLocationIndex(char current_location) {
         int locationIndex = 0;
         char[] letterIndices = {'A', 'B', 'C', 'D'};
@@ -18,11 +21,32 @@ public class MyClass {
         return locationIndex;
     }
 
+    /**
+     * Gets the character at an index.
+     * @param locationIndex: Integer value of the array index.
+     * @return Character at the index.
+     */
+    public static char getLocationChar(int locationIndex) {
+        char[] letterIndices = {'A', 'B', 'C', 'D'};
+        // Array indices start at 0, so subtract 1 from the index value
+        return letterIndices[locationIndex-1];
+    }
+
+    /**
+     * Gets the next square horizontal to the current location's square.
+     * @param locationIndex: Integer value of the array index.
+     * @return Integer value of the next location's index.
+     */
     public static int getNextHorizontalSquare(int locationIndex) {
         // If the number is even, move left. If it's odd, move right.
         return (locationIndex % 2 == 0) ? (locationIndex - 1) : (locationIndex + 1);
     }
 
+    /**
+     * Gets the next square vertical to the current location's square.
+     * @param locationIndex: Integer value of the array index.
+     * @return Integer value of the next location's index.
+     */
     public static int getNextVerticalSquare(int locationIndex) {
         // Row size is how many squares to move past before getting the next location index. For this assignment, there are 2 squares per row
         int rowSize = 2;
@@ -32,7 +56,12 @@ public class MyClass {
         return (locationIndex + rowSize) > tableSize ? (locationIndex - rowSize) : (locationIndex + rowSize);
     }
 
-     public static int getNextDiagonalSquare(int locationIndex) {
+    /**
+     * Gets the next square diagonal to the current location's square.
+     * @param locationIndex: Integer value of the array index.
+     * @return Integer value of the next location's index.
+     */
+    public static int getNextDiagonalSquare(int locationIndex) {
         switch (locationIndex) {
             case 1:
                 return 4;
@@ -46,13 +75,11 @@ public class MyClass {
                 return 0; // If error occurs
         }
     }
-    
-    public static char getLocationChar(int locationIndex) {
-        char[] letterIndices = {'A', 'B', 'C', 'D'};
-        // Array indices start at 0, so subtract 1 from the value
-        return letterIndices[locationIndex-1];
-    }
 
+    /**
+     * Main method that runs the program to get the next location of an action.
+     * @param args: Command line arguments passed to the program.
+     */
     public static void main(String[] args) {
         // Check arguments
         if (args.length != 5) {
@@ -73,8 +100,9 @@ public class MyClass {
                 "Square D status = " + D_status + "\n");
 
         // Assignment 1 function
-        // Set next location default value
+        // Store next location, set a default value
         char nextLocation = current_location;
+
         // If all squares are clean, the vacuum cleaner stays in its current location.
         boolean allSquaresClean = A_status && B_status && C_status && D_status;
         if (allSquaresClean) {
@@ -82,16 +110,7 @@ public class MyClass {
             return;
         }
 
-//        int locationIndex = 0;
-//        char[] letterIndices = {'A', 'B', 'C', 'D'};
-//        // Start at 1 because boolean arguments start at 1
-//        for (int index = 1; index <= letterIndices.length; ++index) {
-//            char currentLetter = letterIndices[index-1];
-//            if (current_location == currentLetter) {
-//                // Set index
-//                locationIndex = index;
-//            }
-//        }
+        // Get current location info
         int locationIndex = getLocationIndex(current_location);
         boolean currentLocationStatus = Boolean.parseBoolean(args[locationIndex]);
 
@@ -120,9 +139,10 @@ public class MyClass {
         }
 
         // If next vertical position is already clean, check next diagonal position
-        nextLocationIndex = getNextDiagonalSquare(locationIndex);
-        nextLocationStatus = Boolean.parseBoolean(args[nextLocationIndex]);
-        if (!nextLocationStatus) {
+        int diagonalLocationIndex = getNextDiagonalSquare(locationIndex);
+        boolean diagonalLocationStatus = Boolean.parseBoolean(args[diagonalLocationIndex]);
+        if (!diagonalLocationStatus) {
+            // If diagonal is not clean, move vertically because vacuum cannot move diagonally
             nextLocation = getLocationChar(nextLocationIndex);
         }
         System.out.println("\nAction - Next Location = " + nextLocation);
