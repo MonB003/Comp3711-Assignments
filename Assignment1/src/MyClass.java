@@ -1,4 +1,58 @@
 public class MyClass {
+
+//    public static char getNextLocation() {
+//
+//    }
+
+    public static int getLocationIndex(char current_location) {
+        int locationIndex = 0;
+        char[] letterIndices = {'A', 'B', 'C', 'D'};
+        // Start at 1 because boolean arguments start at 1
+        for (int index = 1; index <= letterIndices.length; ++index) {
+            char currentLetter = letterIndices[index-1];
+            if (current_location == currentLetter) {
+                // Set index
+                locationIndex = index;
+            }
+        }
+        return locationIndex;
+    }
+
+    public static int getNextHorizontalSquare(int locationIndex) {
+        // If the number is even, move left. If it's odd, move right.
+        return (locationIndex % 2 == 0) ? (locationIndex - 1) : (locationIndex + 1);
+    }
+
+    public static int getNextVerticalSquare(int locationIndex) {
+        // Row size is how many squares to move past before getting the next location index. For this assignment, there are 2 squares per row
+        int rowSize = 2;
+        // Table size is how many squares are in the table. For this assignment, there are 4 squares
+        int tableSize = rowSize * rowSize;
+        // If adding the row size this index is an index larger than the table, move up. If not, move down.
+        return (locationIndex + rowSize) > tableSize ? (locationIndex - rowSize) : (locationIndex + rowSize);
+    }
+
+     public static int getNextDiagonalSquare(int locationIndex) {
+        switch (locationIndex) {
+            case 1:
+                return 4;
+            case 2:
+                return 3;
+            case 3:
+                return 2;
+            case 4:
+                return 1;
+            default:
+                return 0; // If error occurs
+        }
+    }
+    
+    public static char getLocationChar(int locationIndex) {
+        char[] letterIndices = {'A', 'B', 'C', 'D'};
+        // Array indices start at 0, so subtract 1 from the value
+        return letterIndices[locationIndex-1];
+    }
+
     public static void main(String[] args) {
         // Check arguments
         if (args.length != 5) {
@@ -20,43 +74,57 @@ public class MyClass {
 
         // Assignment 1 function
         // Set next location default value
-        char next_location = current_location;
-        // If all squares are clean, the vacuum cleaner stays in its current location
+        char nextLocation = current_location;
+        // If all squares are clean, the vacuum cleaner stays in its current location.
         boolean allSquaresClean = A_status && B_status && C_status && D_status;
         if (allSquaresClean) {
-//            next_location = current_location;
-            return; // Or add else check
+            System.out.println("\nAction - Next Location = " + nextLocation);
+            return;
         }
 
-        // If current location is not clean, vacuum stays in its current location to clean it up
+//        int locationIndex = 0;
+//        char[] letterIndices = {'A', 'B', 'C', 'D'};
+//        // Start at 1 because boolean arguments start at 1
+//        for (int index = 1; index <= letterIndices.length; ++index) {
+//            char currentLetter = letterIndices[index-1];
+//            if (current_location == currentLetter) {
+//                // Set index
+//                locationIndex = index;
+//            }
+//        }
+        int locationIndex = getLocationIndex(current_location);
+        boolean currentLocationStatus = Boolean.parseBoolean(args[locationIndex]);
 
-        int location_index = 0;
-        char[] letter_indices = {'A', 'B', 'C', 'D'};
-        for (int index = 0; index < letter_indices.length; index++) {
-            char current_letter = letter_indices[index];
-            if (current_location == current_letter) {
-                // Set index, add 1 because boolean arguments start at 1
-                location_index = index+1;
-            }
-        }
-        boolean current_location_status = Boolean.parseBoolean(args[location_index]);
-
-        if (current_location == 'A') {
-            // Check if location is clean
-           if (A_status) {
-               // Move to B
-               next_location = 'B';
-           }
-        } else if (current_location == 'B') {
-
-        } else if (current_location == 'C') {
-
-        } else if (current_location == 'D') {
-
-        } else {
-
+        // If the current location is not clean, the vacuum cleaner stays in its current location to clean it up.
+        if (!currentLocationStatus) {
+            System.out.println("\nAction - Next Location = " + nextLocation);
+            return;
         }
 
-        System.out.println("\nAction - Next Location = " + next_location);
+        // Check next horizontal position. Horizontal moves have the highest priority over vertical moves
+        int nextLocationIndex = getNextHorizontalSquare(locationIndex);
+        boolean nextLocationStatus = Boolean.parseBoolean(args[nextLocationIndex]);
+        if (!nextLocationStatus) {
+            nextLocation = getLocationChar(nextLocationIndex);
+            System.out.println("\nAction - Next Location = " + nextLocation);
+            return;
+        }
+
+        // If next horizontal position is already clean, check next vertical position
+        nextLocationIndex = getNextVerticalSquare(locationIndex);
+        nextLocationStatus = Boolean.parseBoolean(args[nextLocationIndex]);
+        if (!nextLocationStatus) {
+            nextLocation = getLocationChar(nextLocationIndex);
+            System.out.println("\nAction - Next Location = " + nextLocation);
+            return;
+        }
+
+        // If next vertical position is already clean, check next diagonal position
+        nextLocationIndex = getNextDiagonalSquare(locationIndex);
+        nextLocationStatus = Boolean.parseBoolean(args[nextLocationIndex]);
+        if (!nextLocationStatus) {
+            nextLocation = getLocationChar(nextLocationIndex);
+        }
+        System.out.println("\nAction - Next Location = " + nextLocation);
     }
 }
