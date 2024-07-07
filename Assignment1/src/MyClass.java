@@ -11,10 +11,10 @@ public class MyClass {
 
     /**
      * Stores the command line arguments in the agentEnvironment array.
-     * @param A_status: Boolean value of square A's status
-     * @param B_status: Boolean value of square B's status
-     * @param C_status: Boolean value of square C's status
-     * @param D_status: Boolean value of square D's status
+     * @param A_status: Boolean value of square A's status.
+     * @param B_status: Boolean value of square B's status.
+     * @param C_status: Boolean value of square C's status.
+     * @param D_status: Boolean value of square D's status.
      */
     public static void setupEnvironment(boolean A_status, boolean B_status, boolean C_status, boolean D_status) {
         agentEnvironment[0][0] = A_status;
