@@ -54,10 +54,10 @@ public class MyClass {
 
             // Check neighbour nodes for the next state in the path
             for (int neighbourIndex = 0; neighbourIndex < cost_matrix.length; neighbourIndex++) {
-                // Store current path cost
-                int currentPathCost = cost_matrix[currentState][neighbourIndex];
+                // Store current path cost (in the current state's column)
+                int currentPathCost = cost_matrix[neighbourIndex][currentState];
                 if (currentPathCost == 0 || closedNodes.contains(neighbourIndex)) {
-                    // Skip this neighbour node
+                    // Skip this neighbour node if its value is 0 (there's no direct path) or it's already been visited
                     continue;
                 }
 
@@ -68,7 +68,7 @@ public class MyClass {
                     // Calculate heuristic function: f(n) = g(n) + h(n) = path cost + estimated cost
                     int estimateCostSum = gPathCost + heuristic_vector[neighbourIndex];
                     estimatedCosts.put(neighbourIndex, estimateCostSum);
-                    openNodes.add(new int[]{neighbourIndex, initialPathCosts.get(neighbourIndex)});
+                    openNodes.add(new int[]{neighbourIndex, estimateCostSum});
                 }
             }
         }
@@ -122,20 +122,20 @@ public class MyClass {
         }
 
         // Write a program to implement the A * search
-        // Print the cheapest path, the goal state and the number of cycles
 
         // Start state is A
         int startStateIndex = 0;
 
-        // Perform A* search
+        // Perform A* search and store path result
         int[] cheapestPath = performAStarSearch(cost_matrix, heuristic_vector, startStateIndex, goalStateIndices);
-        // Print results
+        // Print the cheapest path, the goal state and the number of cycles
         if (cheapestPath.length > 0) {
             System.out.println("Cheapest path: ");
             for (int currentState: cheapestPath) {
                 System.out.print(stateLetters[currentState] + " ");
             }
             System.out.println();
+            System.out.println("Number of cycles: " + cheapestPath.length);
         } else {
             System.out.println("There was no path found to any goal state.");
         }
