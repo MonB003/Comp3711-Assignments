@@ -7,8 +7,9 @@ import java.util.*;
 public class MyClass {
     // Stores the letter(s) corresponding to each index
     public static String[] stateLetters = {"A", "B", "C", "D", "E", "H", "J", "G1", "G2", "G3"};
-    // Stores the cheapest paths to each goal state in the format (goal state index, number of cycles)
+    // Stores the cheapest number of cycles to each goal state in the format (goal state index, number of cycles)
     private static final HashMap<Integer, Integer> goalStatePathCycles = new HashMap<>();
+    // Stores the cheapest paths to each goal state in the format (goal state index, all path states)
     private static final HashMap<Integer, int[]> goalStateCheapestPaths = new HashMap<>();
 
     /**
@@ -138,7 +139,7 @@ public class MyClass {
             printPathStates(cheapestPath);
             // Print the number of cycles
             int numberCycles = goalStatePathCycles.get(goalStateIndex);
-            System.out.println("\nNumber of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + "\n");
+            System.out.println("\nNumber of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + " iterations.\n");
         } else {
             // If there's no path
             System.out.println("There was no path found to the goal state: " + stateLetters[goalStateIndex]);
@@ -166,7 +167,7 @@ public class MyClass {
         }
         // Print cheapest path result
         System.out.print("Overall cheapest path is to goal state " + stateLetters[overallCheapestGoalState] + ". ");
-        System.out.print("Number of cycles: " + overallCheapestCycle + ". Path: ");
+        System.out.print("Number of cycles: " + overallCheapestCycle + " iterations. Path: ");
         int[] overallCheapestPath = goalStateCheapestPaths.get(overallCheapestGoalState);
         printPathStates(overallCheapestPath);
     }
@@ -201,11 +202,6 @@ public class MyClass {
                 goalStatesList.add(index);
             }
         }
-        // Maybe remove array and just use ArrayList?
-//        int[] goalStateIndices = new int[goalStatesList.size()];
-//        for (int goalIndex = 0; goalIndex < goalStatesList.size(); goalIndex++) {
-//           goalStateIndices[goalIndex] = goalStatesList.get(goalIndex);
-//        }
 
         // Write a program to implement the A * search
 
