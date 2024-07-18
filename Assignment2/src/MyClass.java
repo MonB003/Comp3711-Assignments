@@ -11,6 +11,8 @@ public class MyClass {
     private static final HashMap<Integer, Integer> goalStatePathCycles = new HashMap<>();
     // Stores the cheapest paths to each goal state in the format (goal state index, all path states)
     private static final HashMap<Integer, int[]> goalStateCheapestPaths = new HashMap<>();
+    // Stores the costs to each goal state in the format (goal state index, costs of each state)
+    private static final HashMap<Integer, HashMap<Integer, Integer>> goalStatePathCosts = new HashMap<>();
 
     /**
      * Runs A* search from a start state to a specific goal state. Uses a cost matrix and heuristic vector
@@ -53,7 +55,11 @@ public class MyClass {
             if (currentState == goalStateIndex) {
                 // Store number of cycles to reach this goal state
                 goalStatePathCycles.put(currentState, numberCycles);
-                return getPathStates(previousStates, currentState);
+
+                // Initialize HashMap to store path costs
+                goalStatePathCosts.put(currentState, new HashMap<>());
+
+                return getPathStates(previousStates, currentState, initialPathCosts, goalStateIndex);
             }
 
             // State has been visited, update the visited node list
@@ -90,21 +96,33 @@ public class MyClass {
      * Gets all state's indices in the cheapest path.
      * @param previousStates: HashMap of the previously visited states and their costs.
      * @param currentState: Integer value of the current state's index.
+     * @param initialPathCosts: HashMap of path costs as (state index, path cost) pairs.
+     * @param goalStateIndex: Integer value of the goal state's index.
      * @return Integer array of the path state's indices.
      */
-    private static int[] getPathStates(HashMap<Integer, Integer> previousStates, int currentState) {
+    private static int[] getPathStates(HashMap<Integer, Integer> previousStates, int currentState, HashMap<Integer, Integer> initialPathCosts, int goalStateIndex) {
         ArrayList<Integer> allPathStates = new ArrayList<>();
+        HashMap<Integer, Integer> allStateCosts = new HashMap<>();
+
         allPathStates.add(currentState);
+        allStateCosts.put(currentState, initialPathCosts.get(currentState));
+
         // Store all states from the HashMap into an ArrayList
         while (previousStates.containsKey(currentState)) {
             currentState = previousStates.get(currentState);
             allPathStates.add(currentState);
+            allStateCosts.put(currentState, initialPathCosts.get(currentState));
         }
+
         // Store node states in the reverse order they were stored (so it's in the correct order starting from the initial state)
         int[] path = new int[allPathStates.size()];
         for (int index = 0; index < path.length; index++) {
             path[index] = allPathStates.get(allPathStates.size() - 1 - index);
         }
+
+        // Store all costs in goalStatePathCosts HashMap
+        goalStatePathCosts.get(goalStateIndex).putAll(allStateCosts);
+
         return path;
     }
 
@@ -125,6 +143,23 @@ public class MyClass {
     }
 
     /**
+     * Prints the costs for all states in a path.
+     * @param path: Integer array of the path state's indices.
+     * @param goalStateIndex: Integer value of the goal state's index.
+     */
+    public static void printPathCosts(int[] path, int goalStateIndex) {
+        HashMap<Integer, Integer> pathCosts = goalStatePathCosts.get(goalStateIndex);
+        // Loop through all costs in the path
+        for (int state: path) {
+            System.out.print(pathCosts.get(state));
+            if (state != path[path.length - 1]) {
+                // Print commas between costs
+                System.out.print(", ");
+            }
+        }
+    }
+
+    /**
      * Prints the cheapest path, the goal state, and the number of cycles it took to reach the final goal state.
      * @param cheapestPath: Integer array of the cheapest path state's indices.
      * @param goalStateIndex: Integer value of the goal state's index.
@@ -137,9 +172,13 @@ public class MyClass {
             System.out.print("Cheapest path from " + stateLetters[startStateIndex] + " to " + stateLetters[goalStateIndex] + ": ");
             // Print the node states in the path
             printPathStates(cheapestPath);
+            System.out.print("\nCosts to get from " + stateLetters[startStateIndex] + " to " + stateLetters[goalStateIndex] + ": ");
+            printPathCosts(cheapestPath, goalStateIndex);
+
             // Print the number of cycles
             int numberCycles = goalStatePathCycles.get(goalStateIndex);
             System.out.println("\nNumber of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + " iterations.\n");
+
         } else {
             // If there's no path
             System.out.println("There was no path found to the goal state: " + stateLetters[goalStateIndex]);
