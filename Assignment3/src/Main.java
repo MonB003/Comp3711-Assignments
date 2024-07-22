@@ -1,10 +1,13 @@
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Main {
     // Stores the order of provinces and territories
     public static String[] regionsOrder = {"BC", "AB", "SK", "MB", "ON", "QC", "NB", "NS", "PEI", "NL", "NU", "NT", "YT"};
     // Stores all colour options for the map
-    public static char[] allColours = {'r', 'b', 'o', 'j'};
+    public static char[] allColourOptions = {'r', 'b', 'o', 'j'};
+    // Stores k colour options for the map based on the k value passed to the program
+    public static ArrayList<Character> allColours = new ArrayList<>();
 
     /**
      * Checks if a state matrix is a goal state.
@@ -13,17 +16,6 @@ public class Main {
      * @return Boolean value of whether this current state is a goal state or not.
      */
     public static boolean isGoalState(char[] currentState, int[][] adjacencyMatrix) {
-//        for (int row = 0; row < currentState.length; row++) {
-//            for (int column = 0; column < currentState.length; column++) {
-//                // Check if the regions are adjacent, and if these regions have the same colour
-//                if (adjacencyMatrix[row][column] == 1 && currentState[row] == currentState[column]) {
-//                    // This is not a goal state
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
-
         // If there are no adjacent regions that share the same colour, this is a goal state
         return calculateHeuristic(currentState, adjacencyMatrix) == 0;
     }
@@ -95,9 +87,11 @@ public class Main {
 
         // Change the region's colour to a colour that's different from its current one
         char currentStateColour = currentState[regionIndex];
-        char newColour = allColours[randomNumber.nextInt(allColours.length)];
+        int colourIndex = randomNumber.nextInt(allColours.size());
+        char newColour = allColours.get(colourIndex);
         while (newColour == currentStateColour) {
-            newColour = allColours[randomNumber.nextInt(allColours.length)];
+            colourIndex = randomNumber.nextInt(allColours.size());
+            newColour = allColours.get(colourIndex);
         }
 
         // Set the new colour at the region's index
@@ -113,6 +107,7 @@ public class Main {
         for (char currentColour: state) {
             System.out.print(currentColour + " ");
         }
+        System.out.println();
     }
 
     public static void main(String[] args) {
@@ -125,6 +120,11 @@ public class Main {
         // Accept the k value (k is the number of colours) as a command line argument
         int k = Integer.parseInt(args[0]);
         System.out.println("K = " + k);
+
+        // Store k colours in an ArrayList
+        for (int index = 0; index < k; index++) {
+            allColours.add(allColourOptions[index]);
+        }
 
         // Adjacency matrix A, where the value is 1 when the region at indices i and j are adjacent.
         int[][] adjacencyMatrix = {
@@ -145,26 +145,33 @@ public class Main {
 
         // Array for initial state, S0
         char[] currentState = {'b', 'o', 'o', 'o', 'r', 'r', 'j', 'j', 'j', 'j', 'j', 'j', 'j'};
+        System.out.print("Initial state: ");
+        printStateArray(currentState);
+
+        // Core of the hill-climbing search
 
         // Check if the current state is a goal state
-        if (!isGoalState(currentState, adjacencyMatrix)) {
-            System.out.println("Not a goal state");
-
-            // Calculate the cost
-            int currentCost = calculateCost(currentState);
-
+        while (!isGoalState(currentState, adjacencyMatrix)) {
             // Calculate the successor
             char[] successorState = performSuccessorFunction(currentState);
-            int successorCost = calculateCost(successorState);
 
-            if (successorCost < currentCost) {
+            // Calculate the heuristic
+            int currentHeuristic = calculateHeuristic(currentState, adjacencyMatrix);
+            int successorHeuristic = calculateHeuristic(successorState, adjacencyMatrix);
+
+            // If the successor state has a lower heuristic value, move to successor
+            if (successorHeuristic < currentHeuristic) {
                 currentState = successorState;
+                System.out.println("Moving to successor state with heuristic: " + successorHeuristic);
+            } else {
+                // There's no improvement, stop search
+                break;
             }
         }
 
         // Print out the solution in the correct order and also the cost
         System.out.print("Solution state: ");
         printStateArray(currentState);
-        System.out.println("\nCost: " + calculateCost(currentState));
+        System.out.println("Cost: " + calculateCost(currentState));
     }
 }
