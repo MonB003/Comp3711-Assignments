@@ -1,6 +1,10 @@
+import java.util.Random;
+
 public class Main {
     // Stores the order of provinces and territories
     public static String[] regionsOrder = {"BC", "AB", "SK", "MB", "ON", "QC", "NB", "NS", "PEI", "NL", "NU", "NT", "YT"};
+    // Stores all colour options for the map
+    public static char[] allColours = {'r', 'b', 'o', 'j'};
 
     /**
      * Checks if a state matrix is a goal state.
@@ -9,16 +13,19 @@ public class Main {
      * @return Boolean value of whether this current state is a goal state or not.
      */
     public static boolean isGoalState(char[] currentState, int[][] adjacencyMatrix) {
-        for (int row = 0; row < currentState.length; row++) {
-            for (int column = 0; column < currentState.length; column++) {
-                // Check if the regions are adjacent, and if these regions have the same colour
-                if (adjacencyMatrix[row][column] == 1 && currentState[row] == currentState[column]) {
-                    // This is not a goal state
-                    return false;
-                }
-            }
-        }
-        return true;
+//        for (int row = 0; row < currentState.length; row++) {
+//            for (int column = 0; column < currentState.length; column++) {
+//                // Check if the regions are adjacent, and if these regions have the same colour
+//                if (adjacencyMatrix[row][column] == 1 && currentState[row] == currentState[column]) {
+//                    // This is not a goal state
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
+
+        // If there are no adjacent regions that share the same colour, this is a goal state
+        return calculateHeuristic(currentState, adjacencyMatrix) == 0;
     }
 
     /**
@@ -73,8 +80,39 @@ public class Main {
         }
     }
 
+    /**
+     * Successor function changes the colour of a single region and generates a new solution (successor state).
+     * @param currentState: Char array of the current state.
+     * @return Char array of the successor state.
+     */
     public static char[] performSuccessorFunction(char[] currentState) {
-        return new char[]{};
+        // Create Random object for generating random numbers
+        Random randomNumber = new Random();
+        // Successor state is a new array to store the currentState with a colour change
+        char[] successorState = currentState.clone();
+        // Randomly select a single region's index to change the colour of
+        int regionIndex = randomNumber.nextInt(currentState.length);
+
+        // Change the region's colour to a colour that's different from its current one
+        char currentStateColour = currentState[regionIndex];
+        char newColour = allColours[randomNumber.nextInt(allColours.length)];
+        while (newColour == currentStateColour) {
+            newColour = allColours[randomNumber.nextInt(allColours.length)];
+        }
+
+        // Set the new colour at the region's index
+        successorState[regionIndex] = newColour;
+        return successorState;
+    }
+
+    /**
+     * Prints out a state in order.
+     * @param state: Char array of the state.
+     */
+    public static void printStateArray(char[] state) {
+        for (char currentColour: state) {
+            System.out.print(currentColour + " ");
+        }
     }
 
     public static void main(String[] args) {
@@ -107,11 +145,26 @@ public class Main {
 
         // Array for initial state, S0
         char[] currentState = {'b', 'o', 'o', 'o', 'r', 'r', 'j', 'j', 'j', 'j', 'j', 'j', 'j'};
+
+        // Check if the current state is a goal state
         if (!isGoalState(currentState, adjacencyMatrix)) {
             System.out.println("Not a goal state");
 
-            currentState = performSuccessorFunction(currentState);
+            // Calculate the cost
             int currentCost = calculateCost(currentState);
+
+            // Calculate the successor
+            char[] successorState = performSuccessorFunction(currentState);
+            int successorCost = calculateCost(successorState);
+
+            if (successorCost < currentCost) {
+                currentState = successorState;
+            }
         }
+
+        // Print out the solution in the correct order and also the cost
+        System.out.print("Solution state: ");
+        printStateArray(currentState);
+        System.out.println("\nCost: " + calculateCost(currentState));
     }
 }
