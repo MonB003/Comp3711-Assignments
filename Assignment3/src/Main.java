@@ -120,6 +120,10 @@ public class Main {
         // Accept the k value (k is the number of colours) as a command line argument
         int k = Integer.parseInt(args[0]);
         System.out.println("K = " + k);
+        if (k < 3 || k > 4) {
+            System.out.println("No solution when k = " + k);
+            return;
+        }
 
         // Store k colours in an ArrayList
         for (int index = 0; index < k; index++) {
