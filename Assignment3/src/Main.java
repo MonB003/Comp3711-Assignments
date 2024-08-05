@@ -28,8 +28,10 @@ public class Main {
      */
     public static int calculateHeuristic(char[] currentState, int[][] adjacencyMatrix) {
         int adjacentRegionsCount = 0;
+        // Loop through all rows in matrix
         for (int row = 0; row < currentState.length; row++) {
-            for (int column = 0; column < currentState.length; column++) {
+            // Loop through all columns, excluding the first row to avoid double counting values
+            for (int column = row + 1; column < currentState.length; column++) {
                 // Check if the regions are adjacent, and if these regions have the same colour
                 if (adjacencyMatrix[row][column] == 1 && currentState[row] == currentState[column]) {
                     adjacentRegionsCount++;
@@ -152,6 +154,8 @@ public class Main {
         System.out.print("Initial state: ");
         printStateArray(currentState);
 
+        System.out.println("IS GOAL STATE: " + isGoalState(currentState, adjacencyMatrix));
+
         // Core of the hill-climbing search
 
         // Check if the current state is a goal state
@@ -169,6 +173,7 @@ public class Main {
                 System.out.println("Moving to successor state with heuristic: " + successorHeuristic);
             } else {
                 // There's no improvement, stop search
+                System.out.println("STOPPED SEARCH");
                 break;
             }
         }
@@ -177,5 +182,14 @@ public class Main {
         System.out.print("Solution state: ");
         printStateArray(currentState);
         System.out.println("Cost: " + calculateCost(currentState));
+
+        // Example of a goal state
+        char[] testGoalState = {'r', 'b', 'o', 'j', 'r', 'b', 'o', 'j', 'r', 'o', 'b', 'j', 'o'};
+        if (isGoalState(testGoalState, adjacencyMatrix)) {
+            System.out.println("Goal state");
+        } else {
+            System.out.println("Not goal state");
+        }
+
     }
 }
