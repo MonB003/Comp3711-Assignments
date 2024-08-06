@@ -74,31 +74,51 @@ public class Main {
         }
     }
 
+//    /**
+//     * Successor function changes the colour of a single region and generates a new solution (successor state).
+//     * @param currentState: Char array of the current state.
+//     * @return Char array of the successor state.
+//     */
+//    public static char[] performSuccessorFunction(char[] currentState) {
+//        // Create Random object for generating random numbers
+//        Random randomNumber = new Random();
+//        // Successor state is a new array to store the currentState with a colour change
+//        char[] successorState = currentState.clone();
+//        // Randomly select a single region's index to change the colour of
+//        int regionIndex = randomNumber.nextInt(currentState.length);
+//
+//        // Change the region's colour to a colour that's different from its current one
+//        char currentStateColour = currentState[regionIndex];
+//        int colourIndex = randomNumber.nextInt(allColours.size());
+//        char newColour = allColours.get(colourIndex);
+//        while (newColour == currentStateColour) {
+//            colourIndex = randomNumber.nextInt(allColours.size());
+//            newColour = allColours.get(colourIndex);
+//        }
+//
+//        // Set the new colour at the region's index
+//        successorState[regionIndex] = newColour;
+//        return successorState;
+//    }
+
     /**
      * Successor function changes the colour of a single region and generates a new solution (successor state).
      * @param currentState: Char array of the current state.
-     * @return Char array of the successor state.
+     * @return ArrayList of char arrays for the successor states.
      */
-    public static char[] performSuccessorFunction(char[] currentState) {
-        // Create Random object for generating random numbers
-        Random randomNumber = new Random();
-        // Successor state is a new array to store the currentState with a colour change
-        char[] successorState = currentState.clone();
-        // Randomly select a single region's index to change the colour of
-        int regionIndex = randomNumber.nextInt(currentState.length);
-
-        // Change the region's colour to a colour that's different from its current one
-        char currentStateColour = currentState[regionIndex];
-        int colourIndex = randomNumber.nextInt(allColours.size());
-        char newColour = allColours.get(colourIndex);
-        while (newColour == currentStateColour) {
-            colourIndex = randomNumber.nextInt(allColours.size());
-            newColour = allColours.get(colourIndex);
+    public static ArrayList<char[]> generateSuccessorStates(char[] currentState) {
+        ArrayList<char[]> successorStates = new ArrayList<>();
+        for (int index = 0; index < currentState.length; index++) {
+            char currentColour = currentState[index];
+            for (char colour : allColours) {
+                if (colour != currentColour) {
+                    char[] currentSuccessor = currentState.clone();
+                    currentSuccessor[index] = colour;
+                    successorStates.add(currentSuccessor);
+                }
+            }
         }
-
-        // Set the new colour at the region's index
-        successorState[regionIndex] = newColour;
-        return successorState;
+        return successorStates;
     }
 
     /**
@@ -154,42 +174,47 @@ public class Main {
         System.out.print("Initial state: ");
         printStateArray(currentState);
 
-        System.out.println("IS GOAL STATE: " + isGoalState(currentState, adjacencyMatrix));
-
         // Core of the hill-climbing search
 
+        boolean improvementFound = true;
         // Check if the current state is a goal state
-        while (!isGoalState(currentState, adjacencyMatrix)) {
-            // Calculate the successor
-            char[] successorState = performSuccessorFunction(currentState);
-
-            // Calculate the heuristic
+        while (improvementFound && !isGoalState(currentState, adjacencyMatrix)) {
+            // Calculate the successors
+            ArrayList<char[]> successorStates = generateSuccessorStates(currentState);
+            // Store the next state value
+            char[] nextState = null;
             int currentHeuristic = calculateHeuristic(currentState, adjacencyMatrix);
-            int successorHeuristic = calculateHeuristic(successorState, adjacencyMatrix);
 
-            // If the successor state has a lower heuristic value, move to successor
-            if (successorHeuristic < currentHeuristic) {
-                currentState = successorState;
-                System.out.println("Moving to successor state with heuristic: " + successorHeuristic);
+            for (char[] successor : successorStates) {
+                // Calculate the heuristic
+                int successorHeuristic = calculateHeuristic(successor, adjacencyMatrix);
+                // If the successor state has a lower heuristic value, move to successor
+                if (successorHeuristic < currentHeuristic) {
+                    nextState = successor;
+                    currentHeuristic = successorHeuristic;
+                }
+            }
+
+            // If a better successor was found, move to it
+            if (nextState != null) {
+                currentState = nextState;
+                System.out.println("Moving to successor state with heuristic: " + currentHeuristic);
             } else {
                 // There's no improvement, stop search
+                improvementFound = false;
                 System.out.println("STOPPED SEARCH");
-                break;
             }
         }
-
+        
         // Print out the solution in the correct order and also the cost
         System.out.print("Solution state: ");
         printStateArray(currentState);
         System.out.println("Cost: " + calculateCost(currentState));
 
-        // Example of a goal state
-        char[] testGoalState = {'r', 'b', 'o', 'j', 'r', 'b', 'o', 'j', 'r', 'o', 'b', 'j', 'o'};
-        if (isGoalState(testGoalState, adjacencyMatrix)) {
-            System.out.println("Goal state");
+        if (isGoalState(currentState, adjacencyMatrix)) {
+            System.out.println("Current state is a goal state");
         } else {
-            System.out.println("Not goal state");
+            System.out.println("Current state is not a goal state");
         }
-
     }
 }
