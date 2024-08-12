@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Random;
+//import java.util.Random;
 
 public class Main {
     // Stores the order of provinces and territories
@@ -103,6 +103,7 @@ public class Main {
 
     /**
      * Successor function changes the colour of a single region and generates a new solution (successor state).
+     * It generates a list of all possible solutions.
      * @param currentState: Char array of the current state.
      * @return ArrayList of char arrays for the successor states.
      */
@@ -171,6 +172,7 @@ public class Main {
 
         // Array for initial state, S0
         char[] currentState = {'b', 'o', 'o', 'o', 'r', 'r', 'j', 'j', 'j', 'j', 'j', 'j', 'j'};
+//        char[] currentState = {'b', 'o', 'o', 'o', 'r', 'r', 'b', 'b', 'b', 'b', 'b', 'b', 'b'}; // Example of 3 colours
         System.out.print("Initial state: ");
         printStateArray(currentState);
 
