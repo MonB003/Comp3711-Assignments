@@ -45,8 +45,7 @@ public class QuestionFour {
         return entropyValue;
     }
 
-
-    public static double calculateTotalChildEntropy(double[] entropyValues) {
+    public static double calculateTotalChildEntropy(ArrayList<Double> entropyValues) {
         // Calculate child entropy: H(X) = −p(x1)log2 p(x1) −p(x2)log2 p(x2) ... −p(xn)log2 p(xn)
         double childEntropy = 0;
         // Sum all entropy values
@@ -58,14 +57,68 @@ public class QuestionFour {
         return childEntropy;
     }
 
+    public static double calculateAverageChildrenEntropy(ArrayList<double[]> fractionEntropyPairs) {
+        double averageEntropy = 0;
+
+//        // Loop through each set of key value pairs in the HashMap
+//        for (HashMap.Entry<Double, Double> entry : fractionEntropyPairs.entrySet()) {
+//            double currentFraction = entry.getKey();
+//            double currentEntropy = entry.getValue();
+//
+//            // Calculate weighted average entropy by multiplying each fraction by its entropy, and sum the results
+//            averageEntropy += currentFraction * currentEntropy;
+//        }
+
+        // Loop through each set of pairs in the ArrayList
+        for (double[] currentPair : fractionEntropyPairs) {
+            double currentFraction = currentPair[0];
+            double currentEntropy = currentPair[1];
+
+            // Calculate weighted average entropy by multiplying each fraction by its entropy, and sum the results
+            averageEntropy += currentFraction * currentEntropy;
+        }
+
+        System.out.println("Average Children Entropy = " + averageEntropy);
+        return averageEntropy;
+    }
+
+    public static double calculateInformationGain(double parentEntropy, double averageChildrenEntropy) {
+        // Information Gain = entropy(parent) – [average entropy(children)]
+        return parentEntropy - averageChildrenEntropy;
+    }
+
+    public static double compareInformationGains(ArrayList<Double> informationGains) {
+        double highestInformationGain = informationGains.getFirst();
+        for (double currentInformationGain : informationGains) {
+            if (currentInformationGain > highestInformationGain) {
+                highestInformationGain = currentInformationGain;
+            }
+        }
+
+        System.out.println("Highest Information Gain = " + highestInformationGain);
+        return highestInformationGain;
+    }
+
     public static void performID3Algorithm() {
         // EXAMPLE NUMBERS
         double num1 = (double) 3/5;
         double entropy1 = calculateEntropy(num1);
         double num2 = (double) 2/5;
         double entropy2 = calculateEntropy(num2);
-        double[] entropyValues = {entropy1, entropy2};
+        ArrayList<Double> entropyValues = new ArrayList<>();
+        entropyValues.add(entropy1);
+        entropyValues.add(entropy2);
         calculateTotalChildEntropy(entropyValues);
+
+        num1 = (double) 5/14;
+        entropy1 = 0.97098;
+        num2 = (double) 5/14;
+        entropy2 = 0.97098;
+        ArrayList<double[]> fractionEntropyPairs = new ArrayList<>();
+        fractionEntropyPairs.add(new double[]{num1, entropy1});
+        fractionEntropyPairs.add(new double[]{num2, entropy2});
+        calculateAverageChildrenEntropy(fractionEntropyPairs);
+
 
 //        for (String[] currentData: allFileData) {
 //
