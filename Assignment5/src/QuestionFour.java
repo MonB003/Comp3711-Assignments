@@ -36,9 +36,45 @@ public class QuestionFour {
         }
     }
 
-    
+    public static double calculateEntropy(double recordFraction) {
+        // Calculate entropy: -p(x) log2 p(x)
+        double entropyValue;
+        double logBase2Result = (Math.log(recordFraction) / Math.log(2));
+        entropyValue = -recordFraction * logBase2Result;
+        System.out.println("Entropy = " + entropyValue);
+        return entropyValue;
+    }
+
+
+    public static double calculateTotalChildEntropy(double[] entropyValues) {
+        // Calculate child entropy: H(X) = −p(x1)log2 p(x1) −p(x2)log2 p(x2) ... −p(xn)log2 p(xn)
+        double childEntropy = 0;
+        // Sum all entropy values
+        for (double currentEntropy : entropyValues) {
+            childEntropy += currentEntropy;
+        }
+
+        System.out.println("Child Entropy = " + childEntropy);
+        return childEntropy;
+    }
+
+    public static void performID3Algorithm() {
+        // EXAMPLE NUMBERS
+        double num1 = (double) 3/5;
+        double entropy1 = calculateEntropy(num1);
+        double num2 = (double) 2/5;
+        double entropy2 = calculateEntropy(num2);
+        double[] entropyValues = {entropy1, entropy2};
+        calculateTotalChildEntropy(entropyValues);
+
+//        for (String[] currentData: allFileData) {
+//
+//        }
+    }
+
     public static void main(String[] args) {
         String filename = args[0];
         storeFileData(filename);
+        performID3Algorithm();
     }
 }
