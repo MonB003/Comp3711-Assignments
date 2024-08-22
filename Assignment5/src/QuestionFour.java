@@ -2,8 +2,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class QuestionFour {
+    private static final HashMap<Integer, String> attributesIndices = new HashMap<>();
     private static final ArrayList<String[]> allFileData = new ArrayList<>();
     public static void storeFileData(String filename) {
         try {
@@ -15,18 +18,21 @@ public class QuestionFour {
             String currentLine;
             String[] currentFileData;
 
+            // Read the first line with the attributes (column names) in the file
+            currentLine = bufferReader.readLine();
+            currentFileData = currentLine.split(",");
+            // Store the attributes and their column index in the file
+            for (int columnIndex = 0; columnIndex < currentFileData.length; columnIndex++) {
+                String attributeName = currentFileData[columnIndex];
+                attributesIndices.put(columnIndex, attributeName);
+            }
+
             // Read the file line by line
             while ((currentLine = bufferReader.readLine()) != null) {
                 // Get line of data
                 currentFileData = currentLine.split(",");
                 // Store data in the ArrayList
                 allFileData.add(currentFileData);
-
-//                // Print data
-//                for (String data : currentFileData) {
-//                    System.out.print(data + " ");
-//                }
-//                System.out.println();
             }
             bufferReader.close();
             
@@ -60,15 +66,6 @@ public class QuestionFour {
     public static double calculateAverageChildrenEntropy(ArrayList<double[]> fractionEntropyPairs) {
         double averageEntropy = 0;
 
-//        // Loop through each set of key value pairs in the HashMap
-//        for (HashMap.Entry<Double, Double> entry : fractionEntropyPairs.entrySet()) {
-//            double currentFraction = entry.getKey();
-//            double currentEntropy = entry.getValue();
-//
-//            // Calculate weighted average entropy by multiplying each fraction by its entropy, and sum the results
-//            averageEntropy += currentFraction * currentEntropy;
-//        }
-
         // Loop through each set of pairs in the ArrayList
         for (double[] currentPair : fractionEntropyPairs) {
             double currentFraction = currentPair[0];
@@ -99,30 +96,84 @@ public class QuestionFour {
         return highestInformationGain;
     }
 
+    public static HashSet<String> getUniqueAttributeValues(int attributeIndex) {
+        HashSet<String> attributeValues = new HashSet<>();
+
+        // Loop through all rows in the dataset
+        for (String[] currentData : allFileData) {
+            attributeValues.add(currentData[attributeIndex]);
+        }
+
+        return attributeValues;
+    }
+
+    public static double calculateAllSubsetsEntropy(int attributeIndex) {
+        // Store the index of the attribute to split on
+        int splitOnIndex = attributesIndices.size()-1;
+
+        int yesValueCount = 0;
+        int noValueCount = 0;
+        double totalValues = 0;
+        HashSet<String> uniqueAttributeValues = getUniqueAttributeValues(attributeIndex);
+        ArrayList<String> uniqueAttributeList = new ArrayList<>(uniqueAttributeValues);
+
+        // Get the attribute value for the current subset
+        String currentAttributeValue = uniqueAttributeList.get(0);
+        System.out.println("Attribute: " + currentAttributeValue);
+
+        // Loop through all data
+        for (String[] currentData : allFileData) {
+            // Only count the values that match the current attribute value
+            if (currentData[attributeIndex].equalsIgnoreCase(currentAttributeValue)) {
+                String booleanValue = currentData[splitOnIndex];
+                if (booleanValue.equalsIgnoreCase("yes")) {
+                    yesValueCount++;
+                } else {
+                    noValueCount++;
+                }
+                totalValues++;
+            }
+        }
+
+        double yesRecordFraction = yesValueCount / totalValues;
+        double noRecordFraction = noValueCount / totalValues;
+
+        System.out.println("Yes fraction = " + yesValueCount + "/" + totalValues);
+        System.out.println("No fraction = " + noValueCount + "/" + totalValues);
+
+        ArrayList<Double> recordFractions = new ArrayList<>();
+        recordFractions.add(calculateEntropy(yesRecordFraction));
+        recordFractions.add(calculateEntropy(noRecordFraction));
+        calculateTotalChildEntropy(recordFractions);
+
+//        System.out.println("Subset Entropy = " + subsetEntropy);
+        double subsetEntropy = 0;
+        return subsetEntropy;
+    }
+
     public static void performID3Algorithm() {
-        // EXAMPLE NUMBERS
-        double num1 = (double) 3/5;
-        double entropy1 = calculateEntropy(num1);
-        double num2 = (double) 2/5;
-        double entropy2 = calculateEntropy(num2);
-        ArrayList<Double> entropyValues = new ArrayList<>();
-        entropyValues.add(entropy1);
-        entropyValues.add(entropy2);
-        calculateTotalChildEntropy(entropyValues);
-
-        num1 = (double) 5/14;
-        entropy1 = 0.97098;
-        num2 = (double) 5/14;
-        entropy2 = 0.97098;
-        ArrayList<double[]> fractionEntropyPairs = new ArrayList<>();
-        fractionEntropyPairs.add(new double[]{num1, entropy1});
-        fractionEntropyPairs.add(new double[]{num2, entropy2});
-        calculateAverageChildrenEntropy(fractionEntropyPairs);
-
-
-//        for (String[] currentData: allFileData) {
+//        // EXAMPLE NUMBERS
+//        double num1 = (double) 3/5;
+//        double entropy1 = calculateEntropy(num1);
+//        double num2 = (double) 2/5;
+//        double entropy2 = calculateEntropy(num2);
+//        ArrayList<Double> entropyValues = new ArrayList<>();
+//        entropyValues.add(entropy1);
+//        entropyValues.add(entropy2);
+//        calculateTotalChildEntropy(entropyValues);
 //
-//        }
+//        num1 = (double) 5/14;
+//        entropy1 = 0.97098;
+//        num2 = (double) 5/14;
+//        entropy2 = 0.97098;
+//        ArrayList<double[]> fractionEntropyPairs = new ArrayList<>();
+//        fractionEntropyPairs.add(new double[]{num1, entropy1});
+//        fractionEntropyPairs.add(new double[]{num2, entropy2});
+//        calculateAverageChildrenEntropy(fractionEntropyPairs);
+//
+//        getUniqueAttributeValues(0);
+
+        calculateAllSubsetsEntropy(0);
     }
 
     public static void main(String[] args) {
