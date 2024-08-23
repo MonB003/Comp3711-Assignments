@@ -152,7 +152,7 @@ public class QuestionFour {
         // Loop through all data to count yes and no occurrences
         for (String[] currentData : allFileData) {
             // Only count the values that match the current attribute value
-            if (currentData[attributeIndex].equalsIgnoreCase(currentAttributeValue)) {
+            if (currentAttributeValue.isEmpty() || currentData[attributeIndex].equalsIgnoreCase(currentAttributeValue)) {
                 String booleanValue = currentData[splitOnIndex];
                 if (booleanValue.equalsIgnoreCase("yes")) {
                     yesValueCount++;
@@ -196,12 +196,18 @@ public class QuestionFour {
     }
 
     public static void performID3Algorithm() {
-//        // Get entropy of entire subset
-//        int booleanIndex = attributesIndices.size()-1;
-//        calculateRecordFractions(booleanIndex, "");
+        // Calculate entropy of the entire dataset
+        System.out.println("Calculations for entire dataset:");
+        int booleanIndex = attributesIndices.size()-1;
+        double parentEntropy = calculateRecordFractions(booleanIndex, "");
 
-        ArrayList<Subset> subsets = calculateAllSubsetsEntropy(0, 1);
-        double nextParentEntropy = compareInformationGains(subsets);
+        // Find the first attribute to split on by calculating the information gain for each attribute
+        for (int attributeIndex = 0; attributeIndex < attributesIndices.size()-1; attributeIndex++) {
+            System.out.println("-----------------------------");
+            System.out.println("Attribute: " + attributesIndices.get(attributeIndex));
+            ArrayList<Subset> subsets = calculateAllSubsetsEntropy(attributeIndex, parentEntropy);
+            double nextParentEntropy = compareInformationGains(subsets);
+        }
     }
 
     public static void main(String[] args) {
