@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+class Subset {
+    private String attributeName;
+    private double yesFraction;
+    private double noFraction;
+}
+
 public class QuestionFour {
     private static final HashMap<Integer, String> attributesIndices = new HashMap<>();
     private static final ArrayList<String[]> allFileData = new ArrayList<>();
@@ -44,19 +50,18 @@ public class QuestionFour {
 
     public static double calculateEntropy(double recordFraction) {
         // Calculate entropy: -p(x) log2 p(x)
-        double entropyValue;
         double logBase2Result = (Math.log(recordFraction) / Math.log(2));
-        entropyValue = -recordFraction * logBase2Result;
+        double entropyValue = -recordFraction * logBase2Result;
         System.out.println("Entropy = " + entropyValue);
         return entropyValue;
     }
 
-    public static double calculateTotalChildEntropy(ArrayList<Double> entropyValues) {
+    public static double calculateTotalChildEntropy(ArrayList<Double> recordFractions) {
         // Calculate child entropy: H(X) = −p(x1)log2 p(x1) −p(x2)log2 p(x2) ... −p(xn)log2 p(xn)
         double childEntropy = 0;
         // Sum all entropy values
-        for (double currentEntropy : entropyValues) {
-            childEntropy += currentEntropy;
+        for (double currentFraction : recordFractions) {
+            childEntropy += calculateEntropy(currentFraction);
         }
 
         System.out.println("Child Entropy = " + childEntropy);
@@ -142,8 +147,8 @@ public class QuestionFour {
         System.out.println("No fraction = " + noValueCount + "/" + totalValues);
 
         ArrayList<Double> recordFractions = new ArrayList<>();
-        recordFractions.add(calculateEntropy(yesRecordFraction));
-        recordFractions.add(calculateEntropy(noRecordFraction));
+        recordFractions.add(yesRecordFraction);
+        recordFractions.add(noRecordFraction);
         calculateTotalChildEntropy(recordFractions);
 
 //        System.out.println("Subset Entropy = " + subsetEntropy);
@@ -152,28 +157,26 @@ public class QuestionFour {
     }
 
     public static void performID3Algorithm() {
-//        // EXAMPLE NUMBERS
-//        double num1 = (double) 3/5;
-//        double entropy1 = calculateEntropy(num1);
-//        double num2 = (double) 2/5;
-//        double entropy2 = calculateEntropy(num2);
-//        ArrayList<Double> entropyValues = new ArrayList<>();
-//        entropyValues.add(entropy1);
-//        entropyValues.add(entropy2);
-//        calculateTotalChildEntropy(entropyValues);
-//
-//        num1 = (double) 5/14;
-//        entropy1 = 0.97098;
-//        num2 = (double) 5/14;
-//        entropy2 = 0.97098;
-//        ArrayList<double[]> fractionEntropyPairs = new ArrayList<>();
-//        fractionEntropyPairs.add(new double[]{num1, entropy1});
-//        fractionEntropyPairs.add(new double[]{num2, entropy2});
-//        calculateAverageChildrenEntropy(fractionEntropyPairs);
-//
-//        getUniqueAttributeValues(0);
+        // EXAMPLE NUMBERS
+        double num1 = (double) 3/5;
+        double num2 = (double) 2/5;
+        ArrayList<Double> entropyValues = new ArrayList<>();
+        entropyValues.add(num1);
+        entropyValues.add(num2);
+        calculateTotalChildEntropy(entropyValues);
 
-        calculateAllSubsetsEntropy(0);
+        num1 = (double) 5/14;
+        double entropy1 = 0.97098;
+        num2 = (double) 5/14;
+        double entropy2 = 0.97098;
+        ArrayList<double[]> fractionEntropyPairs = new ArrayList<>();
+        fractionEntropyPairs.add(new double[]{num1, entropy1});
+        fractionEntropyPairs.add(new double[]{num2, entropy2});
+        calculateAverageChildrenEntropy(fractionEntropyPairs);
+
+        getUniqueAttributeValues(0);
+
+//        calculateAllSubsetsEntropy(0);
     }
 
     public static void main(String[] args) {
