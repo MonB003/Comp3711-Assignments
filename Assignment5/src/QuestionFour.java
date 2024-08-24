@@ -1,9 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 class Subset {
     private final String attributeName;
@@ -117,7 +115,7 @@ public class QuestionFour {
         return averageEntropy;
     }
 
-    public static double compareInformationGains(ArrayList<Subset> subsets) {
+    public static Subset getHighestInformationGain(ArrayList<Subset> subsets) {
         Subset highestSubset = subsets.getFirst();
         double highestInformationGain = highestSubset.getInformationGain();
         for (Subset currentSubset : subsets) {
@@ -128,7 +126,7 @@ public class QuestionFour {
 
         System.out.println("Highest Information Gain = " + highestInformationGain);
         // Return the entropy of the subset with the highest information gain, so it can become the next parent entropy
-        return highestSubset.getEntropy();
+        return highestSubset;
     }
 
     public static HashSet<String> getUniqueAttributeValues(int attributeIndex) {
@@ -200,15 +198,45 @@ public class QuestionFour {
         System.out.println("Calculations for entire dataset:");
         int booleanIndex = attributesIndices.size()-1;
         double parentEntropy = calculateRecordFractions(booleanIndex, "");
+        ArrayList<Subset> parentEntropyOptions = new ArrayList<>();
 
         // Find the first attribute to split on by calculating the information gain for each attribute
         for (int attributeIndex = 0; attributeIndex < attributesIndices.size()-1; attributeIndex++) {
             System.out.println("-----------------------------");
             System.out.println("Attribute: " + attributesIndices.get(attributeIndex));
             ArrayList<Subset> subsets = calculateAllSubsetsEntropy(attributeIndex, parentEntropy);
-            double nextParentEntropy = compareInformationGains(subsets);
+            Subset nextHighestSubset = getHighestInformationGain(subsets);
+            parentEntropyOptions.add(nextHighestSubset);
         }
+
+        Subset nextParentSubset = getHighestInformationGain(parentEntropyOptions);
+        double nextParentEntropy = nextParentSubset.getEntropy();
     }
+
+//    public static void performID3Iterations(ArrayList<String[]> currentData, ArrayList<String> usedAttributes) {
+//        // Base case: stop if all attributes are used or entropy is 0
+//        if (usedAttributes.size() == attributesIndices.size() - 1 || calculateEntropy(currentData) == 0) {
+//            // Return or store the final node (e.g., majority class label for current subset)
+//            return;
+//        }
+//
+//        double parentEntropy = calculateRecordFractions(currentData, "");
+//        ArrayList<Subset> parentEntropyOptions = new ArrayList<>();
+//
+//        // Loop through each attribute not yet used
+//        for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
+//            if (!usedAttributes.contains(attributeIndex)) {
+//                ArrayList<Subset> subsets = calculateAllSubsetsEntropy(attributeIndex, parentEntropy);
+//                Subset nextHighestSubset = getHighestInformationGain(subsets);
+//                parentEntropyOptions.add(nextHighestSubset);
+//            }
+//        }
+//
+//        // Choose the attribute with the highest information gain
+//        Subset nextParentSubset = getHighestInformationGain(parentEntropyOptions);
+//        int chosenAttributeIndex = attributesIndices.indexOf(nextParentSubset.getAttributeName());
+//        usedAttributes.add(chosenAttributeIndex);
+//    }
 
     public static void main(String[] args) {
         String filename = args[0];
