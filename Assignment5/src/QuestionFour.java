@@ -211,6 +211,8 @@ public class QuestionFour {
 
         Subset nextParentSubset = getHighestInformationGain(parentEntropyOptions);
         double nextParentEntropy = nextParentSubset.getEntropy();
+
+//        performID3Iterations(allFileData, new ArrayList<>());
     }
 
 //    public static void performID3Iterations(ArrayList<String[]> currentData, ArrayList<String> usedAttributes) {
