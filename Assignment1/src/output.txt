@@ -1,0 +1,577 @@
+ECHO is off.
+Running with: A true true true true 
+Current Location = A
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: A true true true false 
+Current Location = A
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = C
+Running with: A true true false true 
+Current Location = A
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: A true true false false 
+Current Location = A
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = C
+Running with: A true false true true 
+Current Location = A
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: A true false true false 
+Current Location = A
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = B
+Running with: A true false false true 
+Current Location = A
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = B
+Running with: A true false false false 
+Current Location = A
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = B
+Running with: A false true true true 
+Current Location = A
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: A false true true false 
+Current Location = A
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = A
+Running with: A false true false true 
+Current Location = A
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = A
+Running with: A false true false false 
+Current Location = A
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = A
+Running with: A false false true true 
+Current Location = A
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: A false false true false 
+Current Location = A
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = A
+Running with: A false false false true 
+Current Location = A
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = A
+Running with: A false false false false 
+Current Location = A
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = A
+Running with: B true true true true 
+Current Location = B
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: B true true true false 
+Current Location = B
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: B true true false true 
+Current Location = B
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = D
+Running with: B true true false false 
+Current Location = B
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = D
+Running with: B true false true true 
+Current Location = B
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: B true false true false 
+Current Location = B
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = B
+Running with: B true false false true 
+Current Location = B
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = B
+Running with: B true false false false 
+Current Location = B
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = B
+Running with: B false true true true 
+Current Location = B
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: B false true true false 
+Current Location = B
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = A
+Running with: B false true false true 
+Current Location = B
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = A
+Running with: B false true false false 
+Current Location = B
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = A
+Running with: B false false true true 
+Current Location = B
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: B false false true false 
+Current Location = B
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = B
+Running with: B false false false true 
+Current Location = B
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = B
+Running with: B false false false false 
+Current Location = B
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = B
+Running with: C true true true true 
+Current Location = C
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = C
+Running with: C true true true false 
+Current Location = C
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: C true true false true 
+Current Location = C
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: C true true false false 
+Current Location = C
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = C
+Running with: C true false true true 
+Current Location = C
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: C true false true false 
+Current Location = C
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: C true false false true 
+Current Location = C
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: C true false false false 
+Current Location = C
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = C
+Running with: C false true true true 
+Current Location = C
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: C false true true false 
+Current Location = C
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: C false true false true 
+Current Location = C
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: C false true false false 
+Current Location = C
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = C
+Running with: C false false true true 
+Current Location = C
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = A
+Running with: C false false true false 
+Current Location = C
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: C false false false true 
+Current Location = C
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: C false false false false 
+Current Location = C
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = C
+Running with: D true true true true 
+Current Location = D
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = D
+Running with: D true true true false 
+Current Location = D
+Square A status = true
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D true true false true 
+Current Location = D
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: D true true false false 
+Current Location = D
+Square A status = true
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D true false true true 
+Current Location = D
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: D true false true false 
+Current Location = D
+Square A status = true
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D true false false true 
+Current Location = D
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: D true false false false 
+Current Location = D
+Square A status = true
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D false true true true 
+Current Location = D
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: D false true true false 
+Current Location = D
+Square A status = false
+Square B status = true
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D false true false true 
+Current Location = D
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: D false true false false 
+Current Location = D
+Square A status = false
+Square B status = true
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D false false true true 
+Current Location = D
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = true
+
+
+Action - Next Location = B
+Running with: D false false true false 
+Current Location = D
+Square A status = false
+Square B status = false
+Square C status = true
+Square D status = false
+
+
+Action - Next Location = D
+Running with: D false false false true 
+Current Location = D
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = true
+
+
+Action - Next Location = C
+Running with: D false false false false 
+Current Location = D
+Square A status = false
+Square B status = false
+Square C status = false
+Square D status = false
+
+
+Action - Next Location = D
