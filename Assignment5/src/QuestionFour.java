@@ -140,6 +140,31 @@ public class QuestionFour {
         return attributeValues;
     }
 
+    public static double calculateSubsetEntropy(ArrayList<String[]> subsetData) {
+        int booleanIndex = attributesIndices.size() - 1;
+        int yesCount = 0;
+        int noCount = 0;
+        double totalValues = subsetData.size();
+
+        for (String[] currentData : subsetData) {
+            String booleanValue = currentData[booleanIndex];
+            if (booleanValue.equalsIgnoreCase("yes")) {
+                yesCount++;
+            } else {
+                noCount++;
+            }
+        }
+
+        double yesFraction = yesCount / totalValues;
+        double noFraction = noCount / totalValues;
+
+        ArrayList<Double> recordFractions = new ArrayList<>();
+        recordFractions.add(yesFraction);
+        recordFractions.add(noFraction);
+
+        return calculateTotalChildEntropy(recordFractions);
+    }
+
     public static double calculateRecordFractions(int attributeIndex, String currentAttributeValue) {
         // Store the index of the attribute to split on
         int splitOnIndex = attributesIndices.size()-1;
@@ -192,6 +217,28 @@ public class QuestionFour {
 
         return allSubsets;
     }
+
+    public static HashMap<String, ArrayList<String[]>> splitAttributeData(ArrayList<String[]> data, int attributeIndex) {
+        // Stores pairs of: attribute name, all data values for that attribute
+        HashMap<String, ArrayList<String[]>> splitData = new HashMap<>();
+
+        // Loop through all rows in the dataset
+        for (String[] currentData : data) {
+            // Get the value of the attribute we want to split on
+            String attributeValue = currentData[attributeIndex];
+
+            // If the value doesn't exist in the map, create a new list for it
+            if (!splitData.containsKey(attributeValue)) {
+                splitData.put(attributeValue, new ArrayList<>());
+            }
+
+            // Add the current row to the appropriate list
+            splitData.get(attributeValue).add(currentData);
+        }
+
+        return splitData;
+    }
+
 
     public static void performID3Algorithm() {
         // Calculate entropy of the entire dataset
