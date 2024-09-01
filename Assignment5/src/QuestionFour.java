@@ -141,11 +141,13 @@ public class QuestionFour {
     }
 
     public static double calculateSubsetEntropy(ArrayList<String[]> subsetData) {
+        // Store the index of the attribute to split on
         int booleanIndex = attributesIndices.size() - 1;
         int yesValueCount = 0;
         int noValueCount = 0;
         double totalValues = subsetData.size();
 
+        // Loop through all data to count yes and no occurrences
         for (String[] currentData : subsetData) {
             String booleanValue = currentData[booleanIndex];
             if (booleanValue.equalsIgnoreCase("yes")) {
@@ -167,38 +169,6 @@ public class QuestionFour {
         return calculateTotalChildEntropy(recordFractions);
     }
 
-//    public static double calculateRecordFractions(int attributeIndex, String currentAttributeValue) {
-//        // Store the index of the attribute to split on
-//        int splitOnIndex = attributesIndices.size()-1;
-//        int yesValueCount = 0;
-//        int noValueCount = 0;
-//        double totalValues = 0;
-//
-//        // Loop through all data to count yes and no occurrences
-//        for (String[] currentData : allFileData) {
-//            // Only count the values that match the current attribute value
-//            if (currentAttributeValue.isEmpty() || currentData[attributeIndex].equalsIgnoreCase(currentAttributeValue)) {
-//                String booleanValue = currentData[splitOnIndex];
-//                if (booleanValue.equalsIgnoreCase("yes")) {
-//                    yesValueCount++;
-//                } else {
-//                    noValueCount++;
-//                }
-//                totalValues++;
-//            }
-//        }
-//
-//        double yesRecordFraction = yesValueCount / totalValues;
-//        double noRecordFraction = noValueCount / totalValues;
-//
-//        System.out.println("Yes fraction = " + yesValueCount + "/" + totalValues);
-//        System.out.println("No fraction = " + noValueCount + "/" + totalValues);
-//
-//        ArrayList<Double> recordFractions = new ArrayList<>();
-//        recordFractions.add(yesRecordFraction);
-//        recordFractions.add(noRecordFraction);
-//        return calculateTotalChildEntropy(recordFractions);
-//    }
 //
 //    public static ArrayList<Subset> calculateAllSubsetsEntropy(int attributeIndex, double parentEntropy) {
 //        // Get each type of attribute value
@@ -226,7 +196,7 @@ public class QuestionFour {
 
         // Loop through all rows in the dataset
         for (String[] currentData : data) {
-            // Get the value of the attribute we want to split on
+            // Get the value of the attribute to split on
             String attributeValue = currentData[attributeIndex];
 
             // If the value doesn't exist in the map, create a new list for it
@@ -241,15 +211,14 @@ public class QuestionFour {
         return splitData;
     }
 
-    public static void calculateSubsetsEntropy(HashMap<String, ArrayList<String[]>> subsets, int attributeIndex, double parentEntropy) {
-//        ArrayList<double[]> fractionEntropyPairs = new ArrayList<>();
+    public static void calculateAllSubsetsEntropy(HashMap<String, ArrayList<String[]>> subsets, double parentEntropy) {
         for (String attributeValue : subsets.keySet()) {
             ArrayList<String[]> subset = subsets.get(attributeValue);
 
-            // Calculate the entropy for this subset
+            // Calculate entropy for this subset
             double subsetEntropy = calculateSubsetEntropy(subset);
 
-            // Calculate information gain
+            // Calculate information gain: Information Gain = entropy(parent) – [average entropy(children)]
             double informationGain = parentEntropy - subsetEntropy;
 
             // Print the subset values along with its entropy and information gain
@@ -266,19 +235,13 @@ public class QuestionFour {
         }
     }
 
-
-    public static void performID3Algorithm() {
-        int numAttributes = allFileData.getFirst().length;
-        for (int index = 0; index < numAttributes; index++) {
-            HashMap<String, ArrayList<String[]>> currentAttributeData = splitAttributeData(allFileData, index);
-            calculateSubsetsEntropy(currentAttributeData, index, 0);
-        }
-
+//    public static double calculateParentEntropy() {
 //        // Calculate entropy of the entire dataset
 //        System.out.println("Calculations for entire dataset:");
 //        int booleanIndex = attributesIndices.size()-1;
 //        double parentEntropy = calculateRecordFractions(booleanIndex, "");
 //        ArrayList<Subset> parentEntropyOptions = new ArrayList<>();
+//        HashMap<String, ArrayList<String[]>> subsets = new HashMap<>();
 //
 //        // Find the first attribute to split on by calculating the information gain for each attribute
 //        for (int attributeIndex = 0; attributeIndex < attributesIndices.size()-1; attributeIndex++) {
@@ -291,6 +254,48 @@ public class QuestionFour {
 //
 //        Subset nextParentSubset = getHighestInformationGain(parentEntropyOptions);
 //        double nextParentEntropy = nextParentSubset.getEntropy();
+//    }
+    public static double calculateParentEntropy() {
+        // Calculate entropy of the entire dataset
+        System.out.println("Calculations for entire dataset:");
+
+        double parentEntropy = calculateSubsetEntropy(allFileData);
+        System.out.println("Dataset Entropy: " + parentEntropy);
+
+        ArrayList<Subset> parentEntropyOptions = new ArrayList<>();
+
+        // Find the first attribute to split on by calculating the information gain for each attribute
+        for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
+            System.out.println("-----------------------------");
+            System.out.println("Attribute: " + attributesIndices.get(attributeIndex));
+
+            // Calculate the information gain for this attribute
+            HashMap<String, ArrayList<String[]>> subsets = splitAttributeData(allFileData, attributeIndex);
+            ArrayList<Subset> subsetsInfo = new ArrayList<>();
+
+            for (String attributeValue : subsets.keySet()) {
+                ArrayList<String[]> subset = subsets.get(attributeValue);
+                double subsetEntropy = calculateSubsetEntropy(subset);
+                double informationGain = parentEntropy - subsetEntropy;
+                Subset currentSubset = new Subset(attributesIndices.get(attributeIndex), attributeValue, subsetEntropy, informationGain);
+                subsetsInfo.add(currentSubset);
+            }
+
+            Subset nextHighestSubset = getHighestInformationGain(subsetsInfo);
+            parentEntropyOptions.add(nextHighestSubset);
+        }
+
+        Subset nextParentSubset = getHighestInformationGain(parentEntropyOptions);
+        return nextParentSubset.getEntropy();
+    }
+
+    public static void performID3Algorithm() {
+        double parentEntropy = calculateParentEntropy();
+        int numAttributes = allFileData.getFirst().length;
+        for (int index = 0; index < numAttributes; index++) {
+            HashMap<String, ArrayList<String[]>> currentAttributeData = splitAttributeData(allFileData, index);
+            calculateAllSubsetsEntropy(currentAttributeData, parentEntropy);
+        }
 
 //        performID3Iterations(allFileData, new ArrayList<>());
     }
