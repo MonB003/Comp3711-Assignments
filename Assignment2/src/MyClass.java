@@ -149,14 +149,17 @@ public class MyClass {
      */
     public static void printPathCosts(int[] path, int goalStateIndex) {
         HashMap<Integer, Integer> pathCosts = goalStatePathCosts.get(goalStateIndex);
+//        int totalPathCost = 0;
         // Loop through all costs in the path
         for (int state: path) {
             System.out.print(pathCosts.get(state));
+//            totalPathCost += pathCosts.get(state);
             if (state != path[path.length - 1]) {
                 // Print commas between costs
                 System.out.print(", ");
             }
         }
+//        System.out.print("\nTotal cost: " + totalPathCost);
     }
 
     /**
