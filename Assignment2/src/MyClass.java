@@ -16,8 +16,6 @@ public class MyClass {
     // Stores the specific state costs to each goal state in the format (goal state index, specific cost of each state)
     private static final HashMap<Integer, ArrayList<Integer>> goalStateSpecificCosts = new HashMap<>();
 
-    private static final HashMap<Integer, Integer> goalStateTotalPathCosts = new HashMap<>();
-
     /**
      * Runs A* search from a start state to a specific goal state. Uses a cost matrix and heuristic vector
      * to calculate the costs between each state.
@@ -94,7 +92,6 @@ public class MyClass {
 
         // Return empty path if no path is found
         return new ArrayList<>();
-//        return new int[0];
     }
     /**
      * Gets all state's indices in the cheapest path.
@@ -129,17 +126,10 @@ public class MyClass {
         Collections.reverse(allPathStates);
         Collections.reverse(specificCosts);
         
-//        // Now construct the path array to return
-//        int[] path = new int[allPathStates.size()];
-//        for (int i = 0; i < path.length; i++) {
-//            path[i] = allPathStates.get(i);
-//        }
-
         // Store all cumulative and specific costs in HashMaps
         goalStateCumulativeCosts.get(goalStateIndex).putAll(initialPathCosts);
         goalStateSpecificCosts.put(goalStateIndex, specificCosts);
 
-//        return path;
         return allPathStates;
     }
 
@@ -177,6 +167,20 @@ public class MyClass {
 
         // Print specific costs at each node
         System.out.print("\nSpecific node costs to get to " + stateLetters[goalStateIndex] + ": " + goalStateSpecificCosts.get(goalStateIndex));
+    }
+
+    /**
+     * Calculates the total cost of a path by summing all the path's specific state costs.
+     * @param goalStateIndex: Integer value of the goal state's index.
+     * @return Integer value of the path's total cost.
+     */
+    public static int getTotalPathCost(int goalStateIndex) {
+        ArrayList<Integer> specificCosts = goalStateSpecificCosts.get(goalStateIndex);
+        int totalCost = 0;
+        for (int currentCost: specificCosts) {
+            totalCost += currentCost;
+        }
+        return totalCost;
     }
 
     /**
@@ -226,6 +230,7 @@ public class MyClass {
         }
         // Print cheapest path result
         System.out.print("Overall cheapest path is to goal state " + stateLetters[overallCheapestGoalState] + ". ");
+        System.out.print("Total cost: " + getTotalPathCost(overallCheapestGoalState) + ". ");
         System.out.print("Number of cycles: " + overallCheapestCycle + " iterations. Path: ");
         ArrayList<Integer> overallCheapestPath = goalStateCheapestPaths.get(overallCheapestGoalState);
         printPathStates(overallCheapestPath);
