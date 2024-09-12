@@ -62,6 +62,8 @@ public class MyClass {
                 // Initialize HashMap to store path costs
                 goalStateCumulativeCosts.put(currentState, new HashMap<>());
 
+                // Print a message stating that a goal state has been reached
+                System.out.println("A goal state has been reached: " + stateLetters[currentState]);
                 return getPathStates(previousStates, currentState, initialPathCosts, goalStateIndex);
             }
 
@@ -208,7 +210,7 @@ public class MyClass {
      */
     public static void printCheapestPathStates(ArrayList<Integer> cheapestPath, int goalStateIndex) {
         // Print the goal state
-        System.out.println("Goal state: " + stateLetters[goalStateIndex]);
+        System.out.println("Result for goal state: " + stateLetters[goalStateIndex]);
         if (!cheapestPath.isEmpty()) {
             // Get the first node state in the path
             int startStateIndex = cheapestPath.getFirst();
@@ -301,6 +303,7 @@ public class MyClass {
         // Run A* search for each goal state in the list
         for (int goalIndex: goalStatesList) {
             // Perform A* search and store path result
+            System.out.println("Running A* search to find a path to the goal state: " + stateLetters[goalIndex]);
             ArrayList<Integer> cheapestPath = performAStarSearch(cost_matrix, heuristic_vector, startStateIndex, goalIndex);
             // Print the cheapest path, the goal state and the number of cycles
             printCheapestPathStates(cheapestPath, goalIndex);
