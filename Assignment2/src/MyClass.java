@@ -174,6 +174,7 @@ public class MyClass {
                 System.out.print(", ");
             }
         }
+        System.out.println("\nTotal cost to get to " + stateLetters[goalStateIndex] + ": " + getTotalPathCost(goalStateIndex));
     }
 
     /**
@@ -203,12 +204,12 @@ public class MyClass {
             System.out.print("Cheapest path from " + stateLetters[startStateIndex] + " to " + stateLetters[goalStateIndex] + ": ");
             // Print the node states in the path
             printPathStates(cheapestPath);
-            System.out.print("\nCumulative costs to get from " + stateLetters[startStateIndex] + " to " + stateLetters[goalStateIndex] + ": ");
+            System.out.print("\nCumulative costs to get to " + stateLetters[goalStateIndex] + ": ");
             printPathCosts(cheapestPath, goalStateIndex);
 
             // Print the number of cycles
             int numberCycles = goalStatePathCycles.get(goalStateIndex);
-            System.out.println("\nNumber of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + " iterations.\n");
+            System.out.println("Number of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + " iterations.\n");
 
         } else {
             // If there's no path
@@ -236,9 +237,11 @@ public class MyClass {
             }
         }
         // Print cheapest path result
-        System.out.print("Overall cheapest path is to goal state " + stateLetters[overallCheapestGoalState] + ". ");
-        System.out.print("Total cost: " + getTotalPathCost(overallCheapestGoalState) + ". ");
-        System.out.print("Number of cycles: " + overallCheapestCycle + " iterations. Path: ");
+        System.out.println("Overall cheapest path result:");
+        System.out.println("The overall cheapest path is to goal state " + stateLetters[overallCheapestGoalState] + ". ");
+        System.out.println("Total cost: " + getTotalPathCost(overallCheapestGoalState) + ". ");
+        System.out.println("Number of cycles: " + overallCheapestCycle + " iterations.");
+        System.out.print("Path: ");
         ArrayList<Integer> overallCheapestPath = goalStateCheapestPaths.get(overallCheapestGoalState);
         printPathStates(overallCheapestPath);
     }
