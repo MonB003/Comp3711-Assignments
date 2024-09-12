@@ -183,8 +183,10 @@ public class MyClass {
      * @return Integer value of the path's total cost.
      */
     public static int getTotalPathCost(int goalStateIndex) {
+        // Store specific state costs to get to the goal state
         ArrayList<Integer> specificCosts = goalStateSpecificCosts.get(goalStateIndex);
         int totalCost = 0;
+        // Add up all costs and store the total
         for (int currentCost: specificCosts) {
             totalCost += currentCost;
         }
@@ -204,6 +206,7 @@ public class MyClass {
             System.out.print("Cheapest path from " + stateLetters[startStateIndex] + " to " + stateLetters[goalStateIndex] + ": ");
             // Print the node states in the path
             printPathStates(cheapestPath);
+            // Print the node state costs
             System.out.print("\nCumulative costs to get to " + stateLetters[goalStateIndex] + ": ");
             printPathCosts(cheapestPath, goalStateIndex);
 
