@@ -166,7 +166,14 @@ public class MyClass {
         }
 
         // Print specific costs at each node
-        System.out.print("\nSpecific node costs to get to " + stateLetters[goalStateIndex] + ": " + goalStateSpecificCosts.get(goalStateIndex));
+        System.out.print("\nSpecific node costs to get to " + stateLetters[goalStateIndex] + ": ");
+        ArrayList<Integer> specificCosts = goalStateSpecificCosts.get(goalStateIndex);
+        for (int cost: specificCosts) {
+            System.out.print(cost);
+            if (cost != specificCosts.getLast()) {
+                System.out.print(", ");
+            }
+        }
     }
 
     /**
@@ -267,7 +274,7 @@ public class MyClass {
             }
         }
 
-        // Write a program to implement the A * search
+        // Program to implement the A * search
 
         // Start state is A
         int startStateIndex = 0;
