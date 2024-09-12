@@ -15,6 +15,8 @@ public class MyClass {
     private static final HashMap<Integer, HashMap<Integer, Integer>> goalStateCumulativeCosts = new HashMap<>();
     // Stores the specific state costs to each goal state in the format (goal state index, specific cost of each state)
     private static final HashMap<Integer, ArrayList<Integer>> goalStateSpecificCosts = new HashMap<>();
+    // Stores the total costs to each goal state in the format (goal state index, total cost)
+    private static final HashMap<Integer, Integer> goalStateTotalPathCosts = new HashMap<>();
 
     /**
      * Runs A* search from a start state to a specific goal state. Uses a cost matrix and heuristic vector
@@ -57,7 +59,6 @@ public class MyClass {
             if (currentState == goalStateIndex) {
                 // Store number of cycles to reach this goal state
                 goalStatePathCycles.put(currentState, numberCycles);
-
                 // Initialize HashMap to store path costs
                 goalStateCumulativeCosts.put(currentState, new HashMap<>());
 
@@ -79,10 +80,11 @@ public class MyClass {
                 // Store the g(n) path cost from the start state to this current state
                 int actualPathCost = initialPathCosts.get(currentState);
                 int gCostToNode = actualPathCost + currentPathCost;
+                // Check if the cost is smaller
                 if (gCostToNode < initialPathCosts.getOrDefault(neighbourIndex, Integer.MAX_VALUE)) {
                     previousStates.put(neighbourIndex, currentState);
                     initialPathCosts.put(neighbourIndex, gCostToNode);
-                    // Calculate heuristic function: f(n) = g(n) + h(n) = path cost + estimated cost
+                    // Calculate heuristic function for A* score: f(n) = g(n) + h(n) = path cost + estimated cost
                     int aStarScore = gCostToNode + heuristic_vector[neighbourIndex];
                     aStarScores.put(neighbourIndex, aStarScore);
                     openNodes.add(new int[]{neighbourIndex, aStarScore});
@@ -140,6 +142,7 @@ public class MyClass {
     public static void printPathStates(ArrayList<Integer> path) {
         // Loop through all node states in the path
         for (int index = 0; index < path.size(); index++) {
+            // Store and print each node state
             int currentState = path.get(index);
             System.out.print(stateLetters[currentState]);
             if (index != path.size()-1) {
@@ -155,8 +158,9 @@ public class MyClass {
      * @param goalStateIndex: Integer value of the goal state's index.
      */
     public static void printPathCosts(ArrayList<Integer> path, int goalStateIndex) {
+        // Get all cumulative costs for each state in the path
         HashMap<Integer, Integer> pathCosts = goalStateCumulativeCosts.get(goalStateIndex);
-        // Loop through all costs in the path
+        // Loop through and print all costs in the path
         for (int state: path) {
             System.out.print(pathCosts.get(state));
             if (state != path.getLast()) {
@@ -168,13 +172,17 @@ public class MyClass {
         // Print specific costs at each node
         System.out.print("\nSpecific node costs to get to " + stateLetters[goalStateIndex] + ": ");
         ArrayList<Integer> specificCosts = goalStateSpecificCosts.get(goalStateIndex);
+        // Loop through and print all costs in the path
         for (int cost: specificCosts) {
             System.out.print(cost);
             if (cost != specificCosts.getLast()) {
                 System.out.print(", ");
             }
         }
-        System.out.println("\nTotal cost to get to " + stateLetters[goalStateIndex] + ": " + getTotalPathCost(goalStateIndex));
+        // Store and print the total cost
+        int totalCost = getTotalPathCost(goalStateIndex);
+        goalStateTotalPathCosts.put(goalStateIndex, totalCost);
+        System.out.println("\nTotal cost to get to " + stateLetters[goalStateIndex] + ": " + totalCost);
     }
 
     /**
@@ -202,6 +210,7 @@ public class MyClass {
         // Print the goal state
         System.out.println("Goal state: " + stateLetters[goalStateIndex]);
         if (!cheapestPath.isEmpty()) {
+            // Get the first node state in the path
             int startStateIndex = cheapestPath.getFirst();
             System.out.print("Cheapest path from " + stateLetters[startStateIndex] + " to " + stateLetters[goalStateIndex] + ": ");
             // Print the node states in the path
@@ -226,23 +235,27 @@ public class MyClass {
      */
     public static void calculateOverallCheapestPath(ArrayList<Integer> goalStatesList) {
         // Store the cheapest number of cycles and goal state for a path
+        int overallCheapestCost = goalStateTotalPathCosts.get(goalStatesList.getFirst());
         int overallCheapestCycle = goalStatePathCycles.get(goalStatesList.getFirst());
         int overallCheapestGoalState = goalStatesList.getFirst();
 
         // Loop through each goal state
         for (int goalStateIndex: goalStatesList) {
-            int currentPathCycle = goalStatePathCycles.get(goalStateIndex);
-            // Check if the current cycle to this goal state is the smallest
-            if (currentPathCycle < overallCheapestCycle) {
-                // Store the cycle values
-                overallCheapestCycle = currentPathCycle;
+            // Get total cost to the goal state
+            int currentPathCost = goalStateTotalPathCosts.get(goalStateIndex);
+            // Check if the current cost to this goal state is the smallest
+            if (currentPathCost < overallCheapestCost) {
+                // Store the path cost and cycle values for the goal state
+                overallCheapestCost = currentPathCost;
+                overallCheapestCycle = goalStatePathCycles.get(goalStateIndex);
                 overallCheapestGoalState = goalStateIndex;
             }
         }
+
         // Print cheapest path result
         System.out.println("Overall cheapest path result:");
         System.out.println("The overall cheapest path is to goal state " + stateLetters[overallCheapestGoalState] + ". ");
-        System.out.println("Total cost: " + getTotalPathCost(overallCheapestGoalState) + ". ");
+        System.out.println("Total cost: " + overallCheapestCost + ". ");
         System.out.println("Number of cycles: " + overallCheapestCycle + " iterations.");
         System.out.print("Path: ");
         ArrayList<Integer> overallCheapestPath = goalStateCheapestPaths.get(overallCheapestGoalState);
