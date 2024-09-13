@@ -36,13 +36,10 @@ public class MyClass {
         HashMap<Integer, Integer> previousStates = new HashMap<>();
         // Store g(n) function results as (state index, path cost) pairs
         HashMap<Integer, Integer> initialPathCosts = new HashMap<>();
-        // Store f(n) function results as (state index, A* score) pairs
-        HashMap<Integer, Integer> aStarScores = new HashMap<>();
 
         // Store start state values
         initialPathCosts.put(startStateIndex, 0);
-        aStarScores.put(startStateIndex, heuristic_vector[startStateIndex]);
-        openNodes.add(new int[]{startStateIndex, aStarScores.get(startStateIndex)});
+        openNodes.add(new int[]{startStateIndex, heuristic_vector[startStateIndex]});
 
         // Store the number of cycles it took to reach the final goal state
         int numberCycles = 0;
@@ -57,9 +54,8 @@ public class MyClass {
 
             // Check if the current state is a goal state
             if (currentState == goalStateIndex) {
-                // Store number of cycles to reach this goal state
+                // Store number of cycles and path costs to reach this goal state
                 goalStatePathCycles.put(currentState, numberCycles);
-                // Initialize HashMap to store path costs
                 goalStateCumulativeCosts.put(currentState, new HashMap<>());
 
                 // Print a message stating that a goal state has been reached
@@ -83,8 +79,7 @@ public class MyClass {
                 final int finalNeighbourIndex = neighbourIndex;
 
                 // Store the g(n) path cost from the start state to this current state
-                int actualPathCost = initialPathCosts.get(currentState);
-                int gCostToNode = actualPathCost + currentPathCost;
+                int gCostToNode = initialPathCosts.get(currentState) + currentPathCost;
                 // Check if the current cost is smaller
                 if (gCostToNode < initialPathCosts.getOrDefault(neighbourIndex, Integer.MAX_VALUE)) {
                     previousStates.put(neighbourIndex, currentState);
@@ -95,7 +90,6 @@ public class MyClass {
 
                     // Calculate heuristic function for A* score: f(n) = g(n) + h(n) = path cost + estimated cost
                     int aStarScore = gCostToNode + heuristic_vector[neighbourIndex];
-                    aStarScores.put(neighbourIndex, aStarScore);
                     openNodes.add(new int[]{neighbourIndex, aStarScore});
                 }
             }
@@ -104,6 +98,7 @@ public class MyClass {
         // Return empty path if no path is found
         return new ArrayList<>();
     }
+
     /**
      * Gets all state's indices in the cheapest path.
      * @param previousStates: HashMap of the previously visited states and their costs.
@@ -125,8 +120,6 @@ public class MyClass {
             int previousState = previousStates.get(currentState);
             // Get the specific cost to move from previousState to currentState
             int specificCost = initialPathCosts.get(currentState) - initialPathCosts.get(previousState);
-
-            // Store in the HashMap ArrayLists 
             allPathStates.add(previousState);
             specificCosts.add(specificCost); 
             // Move to the previous state
@@ -230,7 +223,7 @@ public class MyClass {
 
             // Print the number of cycles
             int numberCycles = goalStatePathCycles.get(goalStateIndex);
-            System.out.println("Number of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + " iterations.\n");
+            System.out.println("Number of cycles to reach " + stateLetters[goalStateIndex] + ": " + numberCycles + " iterations\n");
 
         } else {
             // If there's no path
@@ -310,7 +303,7 @@ public class MyClass {
         // Run A* search for each goal state in the list
         for (int goalIndex: goalStatesList) {
             // Perform A* search and store path result
-            System.out.println("Running A* search to find a path to the goal state: " + stateLetters[goalIndex]);
+            System.out.println("Running A* search to find a path to the goal state " + stateLetters[goalIndex]);
             ArrayList<Integer> cheapestPath = performAStarSearch(cost_matrix, heuristic_vector, startStateIndex, goalIndex);
             // Print the cheapest path, the goal state and the number of cycles
             printCheapestPathStates(cheapestPath, goalIndex);
