@@ -79,6 +79,9 @@ public class MyClass {
                     continue;
                 }
 
+                // Store final neighbourIndex value for potentially removing from the queue
+                final int finalNeighbourIndex = neighbourIndex;
+
                 // Store the g(n) path cost from the start state to this current state
                 int actualPathCost = initialPathCosts.get(currentState);
                 int gCostToNode = actualPathCost + currentPathCost;
@@ -86,6 +89,10 @@ public class MyClass {
                 if (gCostToNode < initialPathCosts.getOrDefault(neighbourIndex, Integer.MAX_VALUE)) {
                     previousStates.put(neighbourIndex, currentState);
                     initialPathCosts.put(neighbourIndex, gCostToNode);
+
+                    // Remove the old neighbour node item if it's in the queue
+                    openNodes.removeIf(node -> node[0] == finalNeighbourIndex);
+
                     // Calculate heuristic function for A* score: f(n) = g(n) + h(n) = path cost + estimated cost
                     int aStarScore = gCostToNode + heuristic_vector[neighbourIndex];
                     aStarScores.put(neighbourIndex, aStarScore);
