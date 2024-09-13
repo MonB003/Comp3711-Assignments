@@ -1,7 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 //import java.util.Random;
 
-public class Main {
+/**
+ * MyClass is a class to handle the assignment 3 functionality of implementing a hill-climbing search to
+ * find the goal state.
+ */
+public class MyClass {
     // Stores the order of provinces and territories
     public static String[] regionsOrder = {"BC", "AB", "SK", "MB", "ON", "QC", "NB", "NS", "PEI", "NL", "NU", "NT", "YT"};
     // Stores all colour options for the map
@@ -133,6 +138,57 @@ public class Main {
         System.out.println();
     }
 
+    /**
+     * Creates an initial state for the case where the k value is 3.
+     * @param currentState: Char array of the current state.
+     * @return Array of the initial state with only 3 colour values.
+     */
+    public static char[] generateThreeColourInitialState(char[] currentState, int[][] adjacencyMatrix) {
+        char[] newInitialState = currentState.clone();
+        // Loop through all colours in the state array
+        for (int index = 0; index < newInitialState.length; index++) {
+            if (newInitialState[index] == 'j') {
+                // Replace the fourth colour 'j' with another colour
+                newInitialState[index] = getCheapestValidColour(index, newInitialState, adjacencyMatrix);
+            }
+        }
+        return newInitialState;
+    }
+
+    /**
+     * Gets the cheapest colour for a region that isn't used by adjacent regions.
+     * @param regionIndex: Integer of the parameter region's index.
+     * @param state: Char array of the current state.
+     * @param adjacencyMatrix: Integer array of the adjacency matrix.
+     * @return Char of the cheapest valid colour.
+     */
+    public static char getCheapestValidColour(int regionIndex, char[] state, int[][] adjacencyMatrix) {
+        HashSet<Character> adjacentColours = new HashSet<>();
+
+        // Check the colours of adjacent regions
+        for (int index = 0; index < adjacencyMatrix[regionIndex].length; index++) {
+            // Check if the current region and this region are adjacent
+            if (adjacencyMatrix[regionIndex][index] == 1) {
+                adjacentColours.add(state[index]);
+            }
+        }
+
+        // Pick the first available colour not used by adjacent regions
+        for (char colour : allColours) {
+            if (!adjacentColours.contains(colour)) {
+                return colour;
+            }
+        }
+
+        // Return the first colour if all are used
+        return allColours.getFirst();
+    }
+
+    /**
+     * Main method that runs the program, which takes a k variable from the command line and uses hill-climbing
+     * search to find the goal state. Prints the list of regions in order and their final colours.
+     * @param args: Command line arguments passed to the program.
+     */
     public static void main(String[] args) {
         // Check for invalid number of command line arguments passed
         if (args.length != 1) {
@@ -144,7 +200,7 @@ public class Main {
         int k = Integer.parseInt(args[0]);
         System.out.println("K = " + k);
         if (k < 3 || k > 4) {
-            System.out.println("No solution when k = " + k);
+            System.out.println("Invalid input. No solution when k = " + k);
             return;
         }
 
@@ -172,7 +228,12 @@ public class Main {
 
         // Array for initial state, S0
         char[] currentState = {'b', 'o', 'o', 'o', 'r', 'r', 'j', 'j', 'j', 'j', 'j', 'j', 'j'};
-//        char[] currentState = {'b', 'o', 'o', 'o', 'r', 'r', 'b', 'b', 'b', 'b', 'b', 'b', 'b'}; // Example of 3 colours
+
+        if (k == 3) {
+            // Update state array by replacing all 'j' values with one of the three colour options
+            currentState = generateThreeColourInitialState(currentState, adjacencyMatrix);
+        }
+
         System.out.print("Initial state: ");
         printStateArray(currentState);
 
@@ -204,7 +265,6 @@ public class Main {
             } else {
                 // There's no improvement, stop search
                 improvementFound = false;
-                System.out.println("STOPPED SEARCH");
             }
         }
         
