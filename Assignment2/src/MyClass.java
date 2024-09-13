@@ -82,7 +82,7 @@ public class MyClass {
                 // Store the g(n) path cost from the start state to this current state
                 int actualPathCost = initialPathCosts.get(currentState);
                 int gCostToNode = actualPathCost + currentPathCost;
-                // Check if the cost is smaller
+                // Check if the current cost is smaller
                 if (gCostToNode < initialPathCosts.getOrDefault(neighbourIndex, Integer.MAX_VALUE)) {
                     previousStates.put(neighbourIndex, currentState);
                     initialPathCosts.put(neighbourIndex, gCostToNode);
@@ -255,12 +255,12 @@ public class MyClass {
         }
 
         // Print cheapest path result
+        ArrayList<Integer> overallCheapestPath = goalStateCheapestPaths.get(overallCheapestGoalState);
         System.out.println("Overall cheapest path result:");
-        System.out.println("The overall cheapest path is to goal state " + stateLetters[overallCheapestGoalState] + ". ");
+        System.out.println("The overall cheapest path is from " + stateLetters[overallCheapestPath.getFirst()] + " to goal state " + stateLetters[overallCheapestGoalState] + ". ");
         System.out.println("Total cost: " + overallCheapestCost + ". ");
         System.out.println("Number of cycles: " + overallCheapestCycle + " iterations.");
         System.out.print("Path: ");
-        ArrayList<Integer> overallCheapestPath = goalStateCheapestPaths.get(overallCheapestGoalState);
         printPathStates(overallCheapestPath);
     }
 
