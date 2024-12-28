@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.HashSet;
-//import java.util.Random;
 
 /**
  * MyClass is a class to handle the assignment 3 functionality of implementing a hill-climbing search to
@@ -79,33 +78,6 @@ public class MyClass {
         }
     }
 
-//    /**
-//     * Successor function changes the colour of a single region and generates a new solution (successor state).
-//     * @param currentState: Char array of the current state.
-//     * @return Char array of the successor state.
-//     */
-//    public static char[] performSuccessorFunction(char[] currentState) {
-//        // Create Random object for generating random numbers
-//        Random randomNumber = new Random();
-//        // Successor state is a new array to store the currentState with a colour change
-//        char[] successorState = currentState.clone();
-//        // Randomly select a single region's index to change the colour of
-//        int regionIndex = randomNumber.nextInt(currentState.length);
-//
-//        // Change the region's colour to a colour that's different from its current one
-//        char currentStateColour = currentState[regionIndex];
-//        int colourIndex = randomNumber.nextInt(allColours.size());
-//        char newColour = allColours.get(colourIndex);
-//        while (newColour == currentStateColour) {
-//            colourIndex = randomNumber.nextInt(allColours.size());
-//            newColour = allColours.get(colourIndex);
-//        }
-//
-//        // Set the new colour at the region's index
-//        successorState[regionIndex] = newColour;
-//        return successorState;
-//    }
-
     /**
      * Successor function changes the colour of a single region and generates a new solution (successor state).
      * It generates a list of all possible solutions.
@@ -116,8 +88,10 @@ public class MyClass {
         ArrayList<char[]> successorStates = new ArrayList<>();
         for (int index = 0; index < currentState.length; index++) {
             char currentColour = currentState[index];
+            // Change the region's colour to a colour that's different from its current one
             for (char colour : allColours) {
                 if (colour != currentColour) {
+                    // Set the new colour at the region's index
                     char[] currentSuccessor = currentState.clone();
                     currentSuccessor[index] = colour;
                     successorStates.add(currentSuccessor);
@@ -236,6 +210,7 @@ public class MyClass {
 
         System.out.print("Initial state: ");
         printStateArray(currentState);
+        System.out.println("Cost: " + calculateCost(currentState) + "\n");
 
         // Core of the hill-climbing search
 
@@ -269,14 +244,14 @@ public class MyClass {
         }
         
         // Print out the solution in the correct order and also the cost
-        System.out.print("Solution state: ");
+        System.out.print("\nSolution state: ");
         printStateArray(currentState);
         System.out.println("Cost: " + calculateCost(currentState));
 
         if (isGoalState(currentState, adjacencyMatrix)) {
-            System.out.println("Current state is a goal state");
+            System.out.println("Current state is a goal state.");
         } else {
-            System.out.println("Current state is not a goal state");
+            System.out.println("Current state is not a goal state.");
         }
     }
 }
