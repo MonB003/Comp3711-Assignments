@@ -6,8 +6,6 @@ import java.util.HashSet;
  * find the goal state.
  */
 public class MyClass {
-    // Stores the order of provinces and territories
-    public static String[] regionsOrder = {"BC", "AB", "SK", "MB", "ON", "QC", "NB", "NS", "PEI", "NL", "NU", "NT", "YT"};
     // Stores all colour options for the map
     public static char[] allColourOptions = {'r', 'b', 'o', 'j'};
     // Stores k colour options for the map based on the k value passed to the program
