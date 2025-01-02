@@ -16,18 +16,18 @@ class Subset {
         this.informationGain = informationGain;
     }
 
-    public void printSubset() {
-        System.out.println("Subset for " + attributeName + ", Value: " + attributeValue
-                + ", Entropy: " + entropy + ", Information Gain: " + informationGain);
-    }
+//    public void printSubset() {
+//        System.out.println("Subset for " + attributeName + ", Value: " + attributeValue
+//                + ", Entropy: " + entropy + ", Information Gain: " + informationGain);
+//    }
 
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    public String getAttributeValue() {
-        return attributeValue;
-    }
+//    public String getAttributeName() {
+//        return attributeName;
+//    }
+//
+//    public String getAttributeValue() {
+//        return attributeValue;
+//    }
 
     public double getEntropy() {
         return entropy;
