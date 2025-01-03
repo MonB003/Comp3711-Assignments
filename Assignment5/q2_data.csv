@@ -1,0 +1,15 @@
+House,Price,Number of Bedrooms,Size (sqft),Distance to Bus-Stop,House sold in 10 days?
+House 1,$300,000,1,3500 sqft,far,No
+House 2,$300,000,1,3500 sqft,near,No
+House 3,$250,000,1,3500 sqft,far,Yes
+House 4,$350,000,2,3500 sqft,far,Yes
+House 5,$350,000,3,5000 sqft,far,Yes
+House 6,$350,000,3,5000 sqft,near,No
+House 7,$250,000,3,5000 sqft,near,Yes
+House 8,$300,000,2,3500 sqft,far,No
+House 9,$300,000,3,5000 sqft,far,Yes
+House 10,$350,000,2,5000 sqft,far,Yes
+House 11,$300,000,2,5000 sqft,near,Yes
+House 12,$250,000,2,3500 sqft,near,Yes
+House 13,$250,000,1,5000 sqft,far,Yes
+House 14,$350,000,2,3500 sqft,near,No
