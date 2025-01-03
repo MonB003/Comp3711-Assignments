@@ -3,15 +3,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
-class Subset {
+class ChildSubset {
     private final String attributeName;
     private final double entropy;
-    private final double informationGain;
 
-    public Subset(String attributeName, double entropy, double informationGain) {
+    public ChildSubset(String attributeName, double entropy) {
         this.attributeName = attributeName;
         this.entropy = entropy;
-        this.informationGain = informationGain;
     }
 
     public String getAttributeName() {
@@ -21,28 +19,30 @@ class Subset {
     public double getEntropy() {
         return entropy;
     }
+}
+
+class Subset {
+    private final String attributeName;
+    private final double informationGain;
+    private final ArrayList<ChildSubset> childrenSubsets;
+
+    public Subset(String attributeName, double informationGain, ArrayList<ChildSubset> childrenSubsets) {
+        this.attributeName = attributeName;
+        this.informationGain = informationGain;
+        this.childrenSubsets = childrenSubsets;
+    }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
 
     public double getInformationGain() {
         return informationGain;
     }
+    public ArrayList<ChildSubset> getChildrenSubsets() {
+        return childrenSubsets;
+    }
 }
-//class Subset {
-//    private final String attributeName;
-//    private final double informationGain;
-//
-//    public Subset(String attributeName, double informationGain) {
-//        this.attributeName = attributeName;
-//        this.informationGain = informationGain;
-//    }
-//
-//    public String getSubsetName() {
-//        return attributeName;
-//    }
-//
-//    public double getInformationGain() {
-//        return informationGain;
-//    }
-//}
 
 class TreeNode {
     String attribute; // The attribute used to split data
@@ -117,18 +117,6 @@ public class QuestionFour {
         return entropyValue;
     }
 
-//    public static double calculateTotalChildEntropy(ArrayList<Double> recordFractions) {
-//        // Calculate child entropy: H(X) = −p(x1)log2 p(x1) −p(x2)log2 p(x2) ... −p(xn)log2 p(xn)
-//        double childEntropy = 0;
-//        // Sum all entropy values
-//        for (double currentFraction : recordFractions) {
-//            childEntropy += calculateEntropy(currentFraction);
-//        }
-//
-//        System.out.println("Child Entropy = " + childEntropy);
-//        return childEntropy;
-//    }
-
     public static double calculateAverageChildrenEntropy(ArrayList<double[]> fractionEntropyPairs, double totalEntries) {
         double averageEntropy = 0;
 
@@ -168,13 +156,8 @@ public class QuestionFour {
         System.out.println("Yes fraction = " + yesValueCount + "/" + totalValues);
         System.out.println("No fraction = " + noValueCount + "/" + totalValues);
 
-        // Return child entropy
+        // Calculate child entropy: H(X) = −p(x1)log2 p(x1) −p(x2)log2 p(x2) ... −p(xn)log2 p(xn)
         return (calculateEntropy(yesFraction) + calculateEntropy(noFraction));
-
-//        ArrayList<Double> recordFractions = new ArrayList<>();
-//        recordFractions.add(yesFraction);
-//        recordFractions.add(noFraction);
-//        return calculateTotalChildEntropy(recordFractions);
     }
 
     public static void printTree(TreeNode node, String prefix) {
@@ -223,7 +206,7 @@ public class QuestionFour {
         return highestSubset;
     }
 
-    public static double calculateParentEntropy() {
+    public static Subset calculateParentEntropy() {
         // Calculate entropy of the entire dataset
         System.out.println("Calculations for entire dataset:");
 
@@ -231,7 +214,6 @@ public class QuestionFour {
         System.out.println("Dataset Entropy: " + parentEntropy);
 
         ArrayList<Subset> parentEntropyOptions = new ArrayList<>();
-//        ArrayList<Subset> subsetsInfo = new ArrayList<>();
 
         // Find the first attribute to split on by calculating the information gain for each attribute
         for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
@@ -241,7 +223,7 @@ public class QuestionFour {
 
             // Calculate the information gain for this attribute
             HashMap<String, ArrayList<String[]>> subsets = splitSubsetData(allFileData, attributeIndex);
-            ArrayList<Subset> subsetsInfo = new ArrayList<>();
+            ArrayList<ChildSubset> subsetsInfo = new ArrayList<>();
 
             // Loop through each child subset in the attribute
             ArrayList<double[]> sizeEntropyPairs = new ArrayList<>();
@@ -254,47 +236,44 @@ public class QuestionFour {
                 totalEntries += subset.size();
                 sizeEntropyPairs.add(new double[]{subset.size(), subsetEntropy});
 
-//                double informationGain = parentEntropy - subsetEntropy;
-//                Subset currentSubset = new Subset(attributesIndices.get(attributeIndex), attributeValue, subsetEntropy, informationGain);
-//                subsetsInfo.add(currentSubset);
+                // Store all child subsets
+                ChildSubset currentSubset = new ChildSubset(attributeValue, subsetEntropy);
+                subsetsInfo.add(currentSubset);
             }
             // Calculate average entropy and info gain
             double averageSubsetEntropy = calculateAverageChildrenEntropy(sizeEntropyPairs, totalEntries);
             System.out.println("AVG ENTROPY: " + averageSubsetEntropy);
             double informationGain = parentEntropy - averageSubsetEntropy;
             System.out.println("INFO GAIN: " + informationGain);
-            Subset currentSubset = new Subset(attributesIndices.get(attributeIndex), averageSubsetEntropy, informationGain);
-//            subsetsInfo.add(currentSubset);
+            Subset currentSubset = new Subset(attributesIndices.get(attributeIndex), informationGain, subsetsInfo);
             parentEntropyOptions.add(currentSubset);
 
-//            Subset nextHighestSubset = getHighestInformationGain(subsetsInfo);
-//            parentEntropyOptions.add(nextHighestSubset);
         }
 
-        Subset nextParentSubset = getHighestInformationGain(parentEntropyOptions);
-        return nextParentSubset.getEntropy();
+        return getHighestInformationGain(parentEntropyOptions);
     }
 
-    public static void calculateAllSubsetsEntropy(HashMap<String, ArrayList<String[]>> subsets, double parentEntropy) {
-        for (String attributeValue : subsets.keySet()) {
-            ArrayList<String[]> subset = subsets.get(attributeValue);
-
-            // Calculate entropy for this subset
-            double subsetEntropy = calculateSubsetEntropy(subset);
-
-            // Calculate information gain: Information Gain = entropy(parent) – [average entropy(children)]
-            double informationGain = parentEntropy - subsetEntropy;
-
-            // Print the subset values along with its entropy and information gain
-            System.out.println("Entropy: " + subsetEntropy);
-            System.out.println("Information Gain: " + informationGain);
-            System.out.println();
-        }
-    }
+//    public static void calculateAllSubsetsEntropy(HashMap<String, ArrayList<String[]>> subsets, double parentEntropy) {
+//        for (String attributeValue : subsets.keySet()) {
+//            ArrayList<String[]> subset = subsets.get(attributeValue);
+//
+//            // Calculate entropy for this subset
+//            double subsetEntropy = calculateSubsetEntropy(subset);
+//
+//            // Calculate information gain: Information Gain = entropy(parent) – [average entropy(children)]
+//            double informationGain = parentEntropy - subsetEntropy;
+//
+//            // Print the subset values along with its entropy and information gain
+//            System.out.println("Entropy: " + subsetEntropy);
+//            System.out.println("Information Gain: " + informationGain);
+//            System.out.println();
+//        }
+//    }
 
     public static void performID3Algorithm() {
-        double parentEntropy = calculateParentEntropy();
-        System.out.println("FINISHED PARENT ENTROPY");
+        calculateParentEntropy();
+//        double parentEntropy = calculateParentEntropy();
+//        System.out.println("FINISHED PARENT ENTROPY");
 //        int numSubsets = allFileData.getFirst().length;
 //        for (int index = 0; index < numSubsets; index++) {
 //            HashMap<String, ArrayList<String[]>> currentSubsetData = splitSubsetData(allFileData, index);
