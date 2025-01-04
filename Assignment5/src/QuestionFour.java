@@ -270,7 +270,7 @@ public class QuestionFour {
     public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, List<String> attributesIndices) {
         // Calculate entropy of the entire dataset (called only once)
         double parentEntropy = calculateSubsetEntropy(currentFileData);
-        System.out.println("Dataset Entropy: " + parentEntropy);
+        System.out.println("Parent Entropy: " + parentEntropy);
 
         ArrayList<AttributeSubset> parentEntropyOptions = new ArrayList<>();
 
@@ -285,7 +285,6 @@ public class QuestionFour {
             System.out.println("INFO GAIN for attribute " + attribute + ": " + informationGain);
 
             // Store the result for this attribute
-//            ArrayList<AttributeSubset> subsetsInfo = new ArrayList<>();
             AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, infoGainResult.getSubsets(), attributeIndex);
             parentEntropyOptions.add(currentSubset);
         }
@@ -366,8 +365,8 @@ public class QuestionFour {
         remainingAttributes.remove(bestSubset.getAttributeName());
 
         System.out.println("--- Splitting on " + bestSubset.getAttributeName() + " ---");
-//        int nextIndexSplit = getAttributeIndex(bestSubset.getAttributeName());
-        int nextIndexSplit = bestSubset.getAttributeIndex();
+        int nextIndexSplit = getAttributeIndex(bestSubset.getAttributeName());
+//        int nextIndexSplit = bestSubset.getAttributeIndex();
         HashMap<String, ArrayList<String[]>> splitData = splitSubsetData(data, nextIndexSplit);
 
         // Recursively build the tree for each subset
@@ -378,41 +377,34 @@ public class QuestionFour {
             node.children.put(value, childNode); // Add the child node
         }
 
+//        // Step 4: Recursively build the tree for each subset and add children to the current node
+//        for (Map.Entry<String, ArrayList<String[]>> entry : splitData.entrySet()) {
+//            // Remove the current best attribute from the list of remaining attributes
+//            List<String> remainingAttributes = new ArrayList<>(attributes);
+//            remainingAttributes.remove(bestSubset.getAttributeName());
+//
+//            // Recursively build the subtree for the current subset
+//            TreeNode childNode = buildTree(entry.getValue(), remainingAttributes);
+//            node.children.put(entry.getKey(), childNode);
+//        }
+
+
+//        for (ChildSubset child : bestSubset.getChildrenSubsets()) {
+//            // Split data based on child attribute value
+//            ArrayList<String[]> childData = splitData.get(child.getAttributeName());
+//
+//            if (child.getEntropy() == 0) {
+//                // If entropy is 0, classify this as a leaf node
+//                node.children.put(child.getAttributeName(), new TreeNode(child.getAttributeName(), true));
+//            } else {
+//                // Recursively split child subset
+//                TreeNode childNode = buildTree(childData, attributes);
+//                node.children.put(child.getAttributeName(), childNode);
+//            }
+//        }
+
         return node; // Return the root node
     }
-//    public static TreeNode buildTree(ArrayList<String[]> data, List<String> attributes) {
-//        // Check if node is a leaf
-//        String classLabel = getClassLabel(data);
-//        if (classLabel != null) {
-//            return new TreeNode(classLabel, true); // Create a leaf node
-//        }
-//
-//        // Calculate entropy and determine the best attribute to split on
-//        AttributeSubset bestSplit = getNextSplitAttribute(data, attributes);
-//        String bestAttribute = bestSplit.getAttributeName();
-//        int attributeIndex = getAttributeIndex(bestAttribute);
-//
-//        // Create the current tree node
-//        TreeNode node = new TreeNode(bestAttribute);
-//
-//        // Split data and recursively build tree for each subset
-//        HashMap<String, ArrayList<String[]>> subsets = splitSubsetData(data, attributeIndex);
-//        for (Map.Entry<String, ArrayList<String[]>> entry : subsets.entrySet()) {
-//            String attributeValue = entry.getKey();
-//            ArrayList<String[]> subset = entry.getValue();
-//
-//            // Remove the used attribute from the list
-//            List<String> remainingAttributes = new ArrayList<>(attributes);
-//            remainingAttributes.remove(bestAttribute);
-//
-//            // Recursively build the subtree
-//            TreeNode childNode = buildTree(subset, remainingAttributes);
-//            node.children.put(attributeValue, childNode);
-//        }
-//
-//        return node;
-//    }
-
 
     public static void performID3Algorithm() {
         ArrayList<String> remainingAttributes = new ArrayList<>(allAttributes);
