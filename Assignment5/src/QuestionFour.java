@@ -253,7 +253,7 @@ public class QuestionFour {
     }
 
     // Main method to calculate parent entropy and find the best attribute to split on
-    public static AttributeSubset calculateParentEntropy(ArrayList<String[]> currentFileData, ArrayList<String> attributesIndices) {
+    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, ArrayList<String> attributesIndices) {
         // Calculate entropy of the entire dataset (called only once)
         double parentEntropy = calculateSubsetEntropy(currentFileData);
         System.out.println("Dataset Entropy: " + parentEntropy);
@@ -342,7 +342,7 @@ public class QuestionFour {
         }
 
         // Step 1: Calculate the best attribute to split on
-        AttributeSubset bestSubset = calculateParentEntropy(data, attributes);
+        AttributeSubset bestSubset = getNextSplitAttribute(data, attributes);
 
         // Step 2: Create a new TreeNode with the best attribute
         TreeNode node = new TreeNode(bestSubset.getAttributeName());
