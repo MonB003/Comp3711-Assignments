@@ -3,11 +3,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
-class AttributeSubset {
+class AttributeSubset { // Ex. Math, Science
     private final String attributeName;
     private final double informationGain;  // Information gain or entropy for child subset
     private final int attributeIndex;
-    private final List<AttributeSubset> childrenSubsets;
+    private final List<ChildSubset> childrenSubsets;
 
     // Constructor for leaf node (no children)
     public AttributeSubset(String attributeName, double informationGain, int attributeIndex) {
@@ -18,11 +18,11 @@ class AttributeSubset {
     }
 
     // Constructor for non-leaf nodes (with children)
-    public AttributeSubset(String attributeName, double informationGain, List<AttributeSubset> childrenSubsets) {
+    public AttributeSubset(String attributeName, double informationGain, List<ChildSubset> childrenSubsets, int attributeIndex) {
         this.attributeName = attributeName;
         this.informationGain = informationGain;
         this.childrenSubsets = childrenSubsets;
-        this.attributeIndex = -1;
+        this.attributeIndex = attributeIndex;
     }
 
     public String getAttributeName() {
@@ -37,16 +37,35 @@ class AttributeSubset {
         return attributeIndex;
     }
 
-    public List<AttributeSubset> getChildrenSubsets() {
+    public List<ChildSubset> getChildrenSubsets() {
         return childrenSubsets;
+    }
+}
+
+class ChildSubset { // Ex. A, A+
+    private final String attributeName;
+    private final double entropy;
+
+    // Constructor for leaf node (no children)
+    public ChildSubset(String attributeName, double entropy) {
+        this.attributeName = attributeName;
+        this.entropy = entropy;
+    }
+
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    public double getEntropy() {
+        return entropy;
     }
 }
 
 class InfoGainResult {
     private final double informationGain;
-    private final ArrayList<AttributeSubset> subsets;
+    private final ArrayList<ChildSubset> subsets;
 
-    public InfoGainResult(double informationGain, ArrayList<AttributeSubset> subsets) {
+    public InfoGainResult(double informationGain, ArrayList<ChildSubset> subsets) {
         this.informationGain = informationGain;
         this.subsets = subsets;
     }
@@ -55,11 +74,10 @@ class InfoGainResult {
         return informationGain;
     }
 
-    public ArrayList<AttributeSubset> getSubsets() {
+    public ArrayList<ChildSubset> getSubsets() {
         return subsets;
     }
 }
-
 
 class TreeNode {
     String attribute; // The attribute used to split data
@@ -226,12 +244,11 @@ public class QuestionFour {
     public static InfoGainResult calculateInformationGain(double parentEntropy, ArrayList<String[]> data, int attributeIndex) {
         // Split data based on attribute
         HashMap<String, ArrayList<String[]>> subsets = splitSubsetData(data, attributeIndex);
-        ArrayList<AttributeSubset> subsetsInfo = new ArrayList<>();
+        ArrayList<ChildSubset> subsetsInfo = new ArrayList<>();
 
         // Loop through each child subset in the attribute
         ArrayList<double[]> sizeEntropyPairs = new ArrayList<>();
         double totalEntries = 0;
-        int index = 0; // Attribute index
         for (String attributeValue : subsets.keySet()) {
             ArrayList<String[]> subset = subsets.get(attributeValue);
             double subsetEntropy = calculateSubsetEntropy(subset);
@@ -239,21 +256,18 @@ public class QuestionFour {
             sizeEntropyPairs.add(new double[]{subset.size(), subsetEntropy});
 
             // Store child subset information
-            AttributeSubset currentSubset = new AttributeSubset(attributeValue, subsetEntropy, index);
+            ChildSubset currentSubset = new ChildSubset(attributeValue, subsetEntropy);
             subsetsInfo.add(currentSubset);
-            index++;
         }
 
         // Calculate average entropy and information gain
         double averageSubsetEntropy = calculateAverageChildrenEntropy(sizeEntropyPairs, totalEntries);
         double infoGain = parentEntropy - averageSubsetEntropy; // Information Gain
         return new InfoGainResult(infoGain, subsetsInfo);
-//        return infoGain;
-
     }
 
     // Main method to calculate parent entropy and find the best attribute to split on
-    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, ArrayList<String> attributesIndices) {
+    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, List<String> attributesIndices) {
         // Calculate entropy of the entire dataset (called only once)
         double parentEntropy = calculateSubsetEntropy(currentFileData);
         System.out.println("Dataset Entropy: " + parentEntropy);
@@ -271,8 +285,8 @@ public class QuestionFour {
             System.out.println("INFO GAIN for attribute " + attribute + ": " + informationGain);
 
             // Store the result for this attribute
-            ArrayList<AttributeSubset> subsetsInfo = new ArrayList<>();
-            AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, subsetsInfo);
+//            ArrayList<AttributeSubset> subsetsInfo = new ArrayList<>();
+            AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, infoGainResult.getSubsets(), attributeIndex);
             parentEntropyOptions.add(currentSubset);
         }
 
@@ -328,7 +342,7 @@ public class QuestionFour {
         return majorityClass;
     }
 
-    public static TreeNode buildTree(ArrayList<String[]> data, ArrayList<String> attributes) {
+    public static TreeNode buildTree(ArrayList<String[]> data, List<String> attributes) {
         // Base case: if the data is pure or no attributes left, return a leaf node
         String classLabel = getClassLabel(data);
         if (classLabel != null) {
@@ -352,7 +366,8 @@ public class QuestionFour {
         remainingAttributes.remove(bestSubset.getAttributeName());
 
         System.out.println("--- Splitting on " + bestSubset.getAttributeName() + " ---");
-        int nextIndexSplit = getAttributeIndex(bestSubset.getAttributeName());
+//        int nextIndexSplit = getAttributeIndex(bestSubset.getAttributeName());
+        int nextIndexSplit = bestSubset.getAttributeIndex();
         HashMap<String, ArrayList<String[]>> splitData = splitSubsetData(data, nextIndexSplit);
 
         // Recursively build the tree for each subset
@@ -365,6 +380,39 @@ public class QuestionFour {
 
         return node; // Return the root node
     }
+//    public static TreeNode buildTree(ArrayList<String[]> data, List<String> attributes) {
+//        // Check if node is a leaf
+//        String classLabel = getClassLabel(data);
+//        if (classLabel != null) {
+//            return new TreeNode(classLabel, true); // Create a leaf node
+//        }
+//
+//        // Calculate entropy and determine the best attribute to split on
+//        AttributeSubset bestSplit = getNextSplitAttribute(data, attributes);
+//        String bestAttribute = bestSplit.getAttributeName();
+//        int attributeIndex = getAttributeIndex(bestAttribute);
+//
+//        // Create the current tree node
+//        TreeNode node = new TreeNode(bestAttribute);
+//
+//        // Split data and recursively build tree for each subset
+//        HashMap<String, ArrayList<String[]>> subsets = splitSubsetData(data, attributeIndex);
+//        for (Map.Entry<String, ArrayList<String[]>> entry : subsets.entrySet()) {
+//            String attributeValue = entry.getKey();
+//            ArrayList<String[]> subset = entry.getValue();
+//
+//            // Remove the used attribute from the list
+//            List<String> remainingAttributes = new ArrayList<>(attributes);
+//            remainingAttributes.remove(bestAttribute);
+//
+//            // Recursively build the subtree
+//            TreeNode childNode = buildTree(subset, remainingAttributes);
+//            node.children.put(attributeValue, childNode);
+//        }
+//
+//        return node;
+//    }
+
 
     public static void performID3Algorithm() {
         ArrayList<String> remainingAttributes = new ArrayList<>(allAttributes);
