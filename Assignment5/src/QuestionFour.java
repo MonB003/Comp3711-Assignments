@@ -338,25 +338,55 @@ public class QuestionFour {
     }
 
     // Main method to calculate parent entropy and find the best attribute to split on
-    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, List<String> attributesIndices) {
-        // Calculate entropy of the entire dataset (called only once)
-//        double parentEntropy = calculateSubsetEntropy(currentFileData);
-//        System.out.println("Parent Entropy: " + parentEntropy);
+//    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, List<String> attributesIndices) {
+//        // Calculate entropy of the entire dataset (called only once)
+////        double parentEntropy = calculateSubsetEntropy(currentFileData);
+////        System.out.println("Parent Entropy: " + parentEntropy);
+//
+//        ArrayList<AttributeSubset> parentEntropyOptions = new ArrayList<>();
+//
+//        // Find the best attribute to split on by calculating information gain for each attribute
+//        for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
+//            String attribute = attributesIndices.get(attributeIndex);
+//            System.out.println("\nAttribute: " + attribute);
+//
+//            // Calculate the information gain for this attribute
+//            InfoGainResult infoGainResult = calculateInformationGain(currentFileData, attributeIndex);
+//            double informationGain = infoGainResult.getInformationGain();
+//            System.out.println("INFO GAIN for attribute " + attribute + ": " + informationGain);
+//
+//            // Store the result for this attribute
+//            AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, infoGainResult.getSubsets(), attributeIndex);
+//            parentEntropyOptions.add(currentSubset);
+//        }
+//
+//        // Return the best subset with the highest information gain
+//        return getHighestInformationGain(parentEntropyOptions);
+//    }
 
+    public static double calculateInformationGainForSubset(ArrayList<String[]> subsetData, int attributeIndex) {
+        // This method only calculates information gain for a subset and one attribute
+        // Calculate the entropy of the subset
+        double subsetEntropy = calculateSubsetEntropy(subsetData);
+
+        // Then, calculate the information gain for splitting based on this attribute
+        InfoGainResult infoGainResult = calculateInformationGain(subsetData, attributeIndex);
+        return infoGainResult.getInformationGain();
+    }
+
+    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> subsetData, List<String> remainingAttributes) {
         ArrayList<AttributeSubset> parentEntropyOptions = new ArrayList<>();
 
-        // Find the best attribute to split on by calculating information gain for each attribute
-        for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
-            String attribute = attributesIndices.get(attributeIndex);
-            System.out.println("\nAttribute: " + attribute);
+        // Loop through remaining attributes to calculate information gain
+        for (String attribute : remainingAttributes) {
+            int attributeIndex = getAttributeIndex(attribute);
 
-            // Calculate the information gain for this attribute
-            InfoGainResult infoGainResult = calculateInformationGain(currentFileData, attributeIndex);
-            double informationGain = infoGainResult.getInformationGain();
+            // Calculate the information gain for this attribute based on the subset data
+            double informationGain = calculateInformationGainForSubset(subsetData, attributeIndex);
             System.out.println("INFO GAIN for attribute " + attribute + ": " + informationGain);
 
             // Store the result for this attribute
-            AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, infoGainResult.getSubsets(), attributeIndex);
+            AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, null, attributeIndex);
             parentEntropyOptions.add(currentSubset);
         }
 
