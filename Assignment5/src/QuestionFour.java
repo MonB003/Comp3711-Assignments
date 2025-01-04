@@ -101,7 +101,7 @@ class TreeNode {
 
 public class QuestionFour {
     private static final HashMap<Integer, String> attributesIndices = new HashMap<>();
-    private static final ArrayList<String> allAttributes = new ArrayList<>();
+    private static final Set<String> allAttributes = new HashSet<>();
     private static final ArrayList<String[]> allFileData = new ArrayList<>();
 
     public static void storeFileData(String filename) {
@@ -267,7 +267,7 @@ public class QuestionFour {
     }
 
     // Main method to calculate parent entropy and find the best attribute to split on
-    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, List<String> attributesIndices) {
+    public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> currentFileData, Set<String> attributesIndices) {
         // Calculate entropy of the entire dataset (called only once)
         double parentEntropy = calculateSubsetEntropy(currentFileData);
         System.out.println("Parent Entropy: " + parentEntropy);
@@ -275,8 +275,10 @@ public class QuestionFour {
         ArrayList<AttributeSubset> parentEntropyOptions = new ArrayList<>();
 
         // Find the best attribute to split on by calculating information gain for each attribute
-        for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
-            String attribute = attributesIndices.get(attributeIndex);
+//        for (int attributeIndex = 0; attributeIndex < attributesIndices.size() - 1; attributeIndex++) {
+        int attributeIndex = 0;
+        for (String attribute : attributesIndices) {
+//            String attribute = attributesIndices.get(attributeIndex);
             System.out.println("Subset: " + attribute);
 
             // Calculate the information gain for this attribute
@@ -287,6 +289,7 @@ public class QuestionFour {
             // Store the result for this attribute
             AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, infoGainResult.getSubsets(), attributeIndex);
             parentEntropyOptions.add(currentSubset);
+            attributeIndex++;
         }
 
         // Return the best subset with the highest information gain
@@ -341,13 +344,16 @@ public class QuestionFour {
         return majorityClass;
     }
 
-    public static TreeNode buildTree(ArrayList<String[]> data, List<String> attributes) {
+    public static TreeNode buildTree(ArrayList<String[]> data, Set<String> attributes, Set<String> visitedAttributes) {
         // Base case: if the data is pure or no attributes left, return a leaf node
         String classLabel = getClassLabel(data);
         if (classLabel != null) {
             return new TreeNode(classLabel, true); // Leaf node
         }
 
+//        if (visitedAttributes.size() == data.getFirst().length) {
+//            return new TreeNode(getMajorityClass(data), true); // Leaf node with majority class label
+//        }
         // Base case: if no attributes are left to split on, return a leaf node with the majority class
         if (attributes.isEmpty()) {
             String majorityClass = getMajorityClass(data);
@@ -356,12 +362,13 @@ public class QuestionFour {
 
         // Step 1: Calculate the best attribute to split on
         AttributeSubset bestSubset = getNextSplitAttribute(data, attributes);
+        visitedAttributes.add(bestSubset.getAttributeName());
 
         // Step 2: Create a new TreeNode with the best attribute
         TreeNode node = new TreeNode(bestSubset.getAttributeName());
 
         // Step 3: Recursively split the data and add child nodes
-        ArrayList<String> remainingAttributes = new ArrayList<>(attributes);
+        Set<String> remainingAttributes = new HashSet<>(attributes);
         remainingAttributes.remove(bestSubset.getAttributeName());
 
         System.out.println("--- Splitting on " + bestSubset.getAttributeName() + " ---");
@@ -373,42 +380,17 @@ public class QuestionFour {
         for (Map.Entry<String, ArrayList<String[]>> entry : splitData.entrySet()) {
             String value = entry.getKey();
             ArrayList<String[]> childData = entry.getValue();
-            TreeNode childNode = buildTree(childData, remainingAttributes);
+//            TreeNode childNode = buildTree(childData, remainingAttributes, visitedAttributes);
+            TreeNode childNode = buildTree(childData, remainingAttributes, new HashSet<>(visitedAttributes));
             node.children.put(value, childNode); // Add the child node
         }
-
-//        // Step 4: Recursively build the tree for each subset and add children to the current node
-//        for (Map.Entry<String, ArrayList<String[]>> entry : splitData.entrySet()) {
-//            // Remove the current best attribute from the list of remaining attributes
-//            List<String> remainingAttributes = new ArrayList<>(attributes);
-//            remainingAttributes.remove(bestSubset.getAttributeName());
-//
-//            // Recursively build the subtree for the current subset
-//            TreeNode childNode = buildTree(entry.getValue(), remainingAttributes);
-//            node.children.put(entry.getKey(), childNode);
-//        }
-
-
-//        for (ChildSubset child : bestSubset.getChildrenSubsets()) {
-//            // Split data based on child attribute value
-//            ArrayList<String[]> childData = splitData.get(child.getAttributeName());
-//
-//            if (child.getEntropy() == 0) {
-//                // If entropy is 0, classify this as a leaf node
-//                node.children.put(child.getAttributeName(), new TreeNode(child.getAttributeName(), true));
-//            } else {
-//                // Recursively split child subset
-//                TreeNode childNode = buildTree(childData, attributes);
-//                node.children.put(child.getAttributeName(), childNode);
-//            }
-//        }
 
         return node; // Return the root node
     }
 
     public static void performID3Algorithm() {
-        ArrayList<String> remainingAttributes = new ArrayList<>(allAttributes);
-        TreeNode root = buildTree(allFileData, remainingAttributes);
+        Set<String> remainingAttributes = new HashSet<>(allAttributes);
+        TreeNode root = buildTree(allFileData, remainingAttributes, new HashSet<>());
         // Print the resulting tree
         printTree(root, "");
     }
