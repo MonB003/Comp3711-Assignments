@@ -61,24 +61,6 @@ class ChildSubset { // Ex. A, A+
     }
 }
 
-class InfoGainResult {
-    private final double informationGain;
-    private final ArrayList<ChildSubset> subsets;
-
-    public InfoGainResult(double informationGain, ArrayList<ChildSubset> subsets) {
-        this.informationGain = informationGain;
-        this.subsets = subsets;
-    }
-
-    public double getInformationGain() {
-        return informationGain;
-    }
-
-    public ArrayList<ChildSubset> getSubsets() {
-        return subsets;
-    }
-}
-
 class TreeNode {
     String attribute; // The attribute used to split data
     Map<String, TreeNode> children; // Children nodes, keyed by attribute value
@@ -263,7 +245,7 @@ public class QuestionFour {
     }
 
     public static AttributeSubset getHighestInformationGain(ArrayList<AttributeSubset> subsets) {
-        System.out.println("\n--- Finding higehst information gain ---");
+        System.out.println("\n--- Finding highest information gain ---");
         AttributeSubset highestSubset = subsets.getFirst();
         double highestInformationGain = highestSubset.getInformationGain();
 //        for (AttributeSubset currentSubset : subsets) {
@@ -288,15 +270,15 @@ public class QuestionFour {
         return highestSubset;
     }
 
-    private static ArrayList<String[]> getSubsetForAttributeValue(ArrayList<String[]> data, int attributeIndex, String value) {
-        ArrayList<String[]> subset = new ArrayList<>();
-        for (String[] row : data) {
-            if (row[attributeIndex].equals(value)) {
-                subset.add(row);
-            }
-        }
-        return subset;
-    }
+//    private static ArrayList<String[]> getSubsetForAttributeValue(ArrayList<String[]> data, int attributeIndex, String value) {
+//        ArrayList<String[]> subset = new ArrayList<>();
+//        for (String[] row : data) {
+//            if (row[attributeIndex].equals(value)) {
+//                subset.add(row);
+//            }
+//        }
+//        return subset;
+//    }
 
     // Method to calculate information gain for an attribute
     public static double calculateInformationGain(ArrayList<String[]> data, int attributeIndex) {
@@ -326,8 +308,7 @@ public class QuestionFour {
 
         // Calculate average entropy and information gain
         double averageSubsetEntropy = calculateAverageChildrenEntropy(sizeEntropyPairs, totalEntries);
-        return parentEntropy - averageSubsetEntropy; // Information Gain
-//        return new InfoGainResult(infoGain, subsetsInfo);
+        return parentEntropy - averageSubsetEntropy; // Return information gain
     }
 
     // Main method to calculate parent entropy and find the best attribute to split on
@@ -357,15 +338,6 @@ public class QuestionFour {
 //        return getHighestInformationGain(parentEntropyOptions);
 //    }
 
-//    public static double calculateInformationGainForSubset(ArrayList<String[]> subsetData, int attributeIndex) {
-//        // This method only calculates information gain for a subset and one attribute
-//        // Calculate the entropy of the subset
-////        double subsetEntropy = calculateSubsetEntropy(subsetData);
-//
-//        // Then, calculate the information gain for splitting based on this attribute
-//        InfoGainResult infoGainResult = calculateInformationGain(subsetData, attributeIndex);
-//        return infoGainResult.getInformationGain();
-//    }
 
     public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> subsetData, List<String> remainingAttributes) {
         ArrayList<AttributeSubset> parentEntropyOptions = new ArrayList<>();
@@ -379,10 +351,8 @@ public class QuestionFour {
 //            }
 
             // Calculate the information gain for this attribute based on the subset data
-//            InfoGainResult infoGainResult = calculateInformationGain(subsetData, attributeIndex);
             double informationGain = calculateInformationGain(subsetData, attributeIndex);
-//            double informationGain = calculateInformationGainForSubset(subsetData, attributeIndex);
-            System.out.println("Information gain for " + attribute + ": " + informationGain + "\n");
+            System.out.println("Information Gain for " + attribute + ": " + informationGain + "\n");
 
             // Store the result for this attribute
             AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, null, attributeIndex);
