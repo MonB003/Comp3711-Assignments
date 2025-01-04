@@ -42,6 +42,24 @@ class AttributeSubset {
     }
 }
 
+class InfoGainResult {
+    private final double informationGain;
+    private final ArrayList<AttributeSubset> subsets;
+
+    public InfoGainResult(double informationGain, ArrayList<AttributeSubset> subsets) {
+        this.informationGain = informationGain;
+        this.subsets = subsets;
+    }
+
+    public double getInformationGain() {
+        return informationGain;
+    }
+
+    public ArrayList<AttributeSubset> getSubsets() {
+        return subsets;
+    }
+}
+
 
 class TreeNode {
     String attribute; // The attribute used to split data
@@ -127,7 +145,7 @@ public class QuestionFour {
             averageEntropy += (currentChildSize/totalEntries) * currentEntropy;
         }
 
-//        System.out.println("Average Children Entropy = " + averageEntropy);
+        System.out.println("Average Children Entropy = " + averageEntropy);
         return averageEntropy;
     }
 
@@ -205,7 +223,7 @@ public class QuestionFour {
     }
 
     // Method to calculate information gain for an attribute
-    public static double calculateInformationGain(double parentEntropy, ArrayList<String[]> data, int attributeIndex) {
+    public static InfoGainResult calculateInformationGain(double parentEntropy, ArrayList<String[]> data, int attributeIndex) {
         // Split data based on attribute
         HashMap<String, ArrayList<String[]>> subsets = splitSubsetData(data, attributeIndex);
         ArrayList<AttributeSubset> subsetsInfo = new ArrayList<>();
@@ -229,8 +247,8 @@ public class QuestionFour {
         // Calculate average entropy and information gain
         double averageSubsetEntropy = calculateAverageChildrenEntropy(sizeEntropyPairs, totalEntries);
         double infoGain = parentEntropy - averageSubsetEntropy; // Information Gain
-        return infoGain;
-//        HashMap<Double, ArrayList<AttributeSubset>> result = new HashMap<>(infoGain, subsetsInfo);
+        return new InfoGainResult(infoGain, subsetsInfo);
+//        return infoGain;
 
     }
 
@@ -248,7 +266,8 @@ public class QuestionFour {
             System.out.println("Subset: " + attribute);
 
             // Calculate the information gain for this attribute
-            double informationGain = calculateInformationGain(parentEntropy, currentFileData, attributeIndex);
+            InfoGainResult infoGainResult = calculateInformationGain(parentEntropy, currentFileData, attributeIndex);
+            double informationGain = infoGainResult.getInformationGain();
             System.out.println("INFO GAIN for attribute " + attribute + ": " + informationGain);
 
             // Store the result for this attribute
