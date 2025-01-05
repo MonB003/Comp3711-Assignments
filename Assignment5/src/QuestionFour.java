@@ -4,7 +4,7 @@ import java.io.FileReader;
 import java.util.*;
 
 /**
- * Class that represents an attribute in the data file, such as Math or Science.
+ * AttributeSubset class represents an attribute in the data file, such as Math or Science.
  */
 class AttributeSubset {
     private final String attributeName;
@@ -15,6 +15,7 @@ class AttributeSubset {
         this.informationGain = informationGain;
     }
 
+    /* Getter methods for inputs and outputs */
     public String getAttributeName() {
         return attributeName;
     }
@@ -25,7 +26,7 @@ class AttributeSubset {
 }
 
 /**
- * Class that represents a node in the decision tree.
+ * TreeNode class represents a node in the decision tree.
  */
 class TreeNode {
     String attribute; // The attribute used to split data
@@ -42,16 +43,31 @@ class TreeNode {
         this.children = null;
     }
 
+    /**
+     * Returns a boolean value of whether the node is a leaf node.
+     * @return True if the node is a leaf node, otherwise false.
+     */
     public boolean isLeaf() {
         return nodeType != null;
     }
 }
 
+/**
+ * QuestionFour class handles the assignment 5 functionality for question 4, such as reading and storing file data,
+ * calculating entropy and information gain, finding the next attribute to split on, and building the decision tree.
+ */
 public class QuestionFour {
+    // Stores (index, attribute name) pairs of each attribute
     private static final HashMap<Integer, String> attributesIndices = new HashMap<>();
+    // Stores a list of all attribute names listed in the data
     private static final List<String> allAttributes = new ArrayList<>();
+    // Stores all data read from the file passed to the program
     private static final ArrayList<String[]> allFileData = new ArrayList<>();
 
+    /**
+     * Reads a CSV file, extracts attributes and data, and stores them as String arrays in the allFileData list.
+     * @param filename: String of the data filename.
+     */
     public static void storeFileData(String filename) {
         try {
             // Create objects to read the file
@@ -87,6 +103,12 @@ public class QuestionFour {
         }
     }
 
+    /**
+     * Calculates the weighted average entropy of child nodes based on their size and entropy.
+     * @param fractionEntropyPairs: ArrayList that stores double pairs of (size, entropy) values.
+     * @param totalEntries: Double value of the total number of entries in the subset.
+     * @return Double value of the average entropy of the children.
+     */
     public static double calculateAverageChildrenEntropy(ArrayList<double[]> fractionEntropyPairs, double totalEntries) {
         double averageEntropy = 0.0;
 
@@ -103,6 +125,11 @@ public class QuestionFour {
         return averageEntropy;
     }
 
+    /**
+     * Calculates the entropy of a subset using "Yes" and "No" class labels.
+     * @param subsetData: ArrayList of String arrays that stores the subset data rows.
+     * @return Double value of the subset entropy.
+     */
     public static double calculateSubsetEntropy(ArrayList<String[]> subsetData) {
         // Store the index of the boolean attribute
         int booleanIndex = attributesIndices.size() - 1;
@@ -139,17 +166,28 @@ public class QuestionFour {
         return entropy;
     }
 
+    /**
+     * Recursively prints the decision tree structure.
+     * @param node: TreeNode object of the node to print.
+     * @param prefix: String value to print before the node.
+     */
     public static void printTree(TreeNode node, String prefix) {
         if (node.isLeaf()) {
-            System.out.println(prefix + "Leaf: " + node.nodeType);
+            System.out.println(prefix + node.nodeType);
         } else {
-            System.out.println(prefix + "Subset: " + node.attribute);
+            System.out.println(prefix + node.attribute);
             for (Map.Entry<String, TreeNode> entry : node.children.entrySet()) {
                 printTree(entry.getValue(), prefix + "  " + entry.getKey() + " -> ");
             }
         }
     }
 
+    /**
+     * Splits a dataset into subsets based on the values of a specified attribute.
+     * @param data: ArrayList of String arrays that stores the file data rows.
+     * @param attributeIndex: Integer of the attribute's index in the data list.
+     * @return HashMap of (attribute, data) pairs for each attribute and its data.
+     */
     public static HashMap<String, ArrayList<String[]>> splitSubsetData(ArrayList<String[]> data, int attributeIndex) {
         // Stores pairs of: attribute name, all data values for that attribute
         HashMap<String, ArrayList<String[]>> splitData = new HashMap<>();
@@ -171,8 +209,13 @@ public class QuestionFour {
         return splitData;
     }
 
+    /**
+     * Finds the attribute subset with the highest information gain.
+     * @param subsets: ArrayList of AttributeSubset objects for each subset.
+     * @return AttributeSubset of the subset with the highest information gain.
+     */
     public static AttributeSubset getHighestInformationGain(ArrayList<AttributeSubset> subsets) {
-        System.out.println("\n--- Finding highest information gain ---");
+        System.out.println("--- Finding highest information gain ---");
         AttributeSubset highestSubset = subsets.getFirst();
         double highestInformationGain = highestSubset.getInformationGain();
 
@@ -186,12 +229,17 @@ public class QuestionFour {
             }
         }
 
-        System.out.println("Highest information gain is " + highestSubset.getAttributeName() + ": " + highestInformationGain + "\n");
-        // Return the subset with the highest information gain, so it can become the next parent entropy
+        System.out.println("\nHighest information gain is " + highestSubset.getAttributeName() + ": " + highestInformationGain + "\n");
+        // Return the subset with the highest information gain, so it can become the next parent entropy of the attribute to split
         return highestSubset;
     }
 
-    // Method to calculate information gain for an attribute
+    /**
+     * Calculates the information gain of an attribute by calculating the parent entropy and the average subset entropy.
+     * @param data: ArrayList of String arrays that stores the file data rows.
+     * @param attributeIndex: Integer of the attribute's index in the data list.
+     * @return Double value of the information gain.
+     */
     public static double calculateInformationGain(ArrayList<String[]> data, int attributeIndex) {
         System.out.println("Attribute: " + allAttributes.get(attributeIndex));
         double parentEntropy = calculateSubsetEntropy(data);
@@ -217,7 +265,12 @@ public class QuestionFour {
         return parentEntropy - averageSubsetEntropy; // Return information gain
     }
 
-    // Main method to calculate parent entropy and find the best attribute to split on
+    /**
+     * Determines the best attribute to split on by calculating the information gain for each attribute.
+     * @param subsetData: ArrayList of String arrays that stores the subset data rows.
+     * @param remainingAttributes: List of Strings for each attribute that hasn't been split on.
+     * @return AttributeSubset object of the subset with the highest information gain, which will be split on next.
+     */
     public static AttributeSubset getNextSplitAttribute(ArrayList<String[]> subsetData, List<String> remainingAttributes) {
         ArrayList<AttributeSubset> parentEntropyOptions = new ArrayList<>();
 
@@ -241,11 +294,17 @@ public class QuestionFour {
         return getHighestInformationGain(parentEntropyOptions);
     }
 
+    /**
+     * Checks if all data rows have the same class label (yes or no).
+     * @param data: ArrayList of String arrays that stores the file data rows.
+     * @return String value of the class label if the labels are the same, otherwise return null.
+     */
     private static String getClassLabel(ArrayList<String[]> data) {
         String classLabel = null;
 
-        // Check if all examples have the same class label
+        // Check if all data rows have the same class label (yes or no value)
         for (String[] record : data) {
+            // Get the label value of the boolean attribute
             String currentLabel = record[record.length - 1];
             if (classLabel == null) {
                 classLabel = currentLabel;
@@ -257,6 +316,11 @@ public class QuestionFour {
         return classLabel; // Return class label if all examples have the same label
     }
 
+    /**
+     * Gets the index of an attribute in the dataset.
+     * @param attributeName: String of the attribute name.
+     * @return Integer of the attribute's index in the attributesIndices HashMap, otherwise return -1 if not found.
+     */
     public static int getAttributeIndex(String attributeName) {
         for (Map.Entry<Integer, String> entry : attributesIndices.entrySet()) {
             if (entry.getValue().equals(attributeName)) {
@@ -266,6 +330,11 @@ public class QuestionFour {
         return -1; // Return -1 if the attribute is not found
     }
 
+    /**
+     * Determines the majority class label in the dataset by counting occurrences.
+     * @param data: ArrayList of String arrays that stores the file data rows.
+     * @return String value of the class label with the most occurrences.
+     */
     private static String getMajorityClass(ArrayList<String[]> data) {
         HashMap<String, Integer> classCounts = new HashMap<>();
 
@@ -288,6 +357,13 @@ public class QuestionFour {
         return majorityClass;
     }
 
+    /**
+     * Recursively builds a decision tree using the ID3 algorithm, splitting on attributes with the highest
+     * information gain until a stopping condition is met.
+     * @param data: ArrayList of String arrays that stores the file data rows.
+     * @param attributes: List of Strings for each attribute name.
+     * @return TreeNode object of the entire tree's root node.
+     */
     public static TreeNode buildTree(ArrayList<String[]> data, List<String> attributes) {
         // Base case: if the data is pure or no attributes left, return a leaf node
         String classLabel = getClassLabel(data);
@@ -326,14 +402,23 @@ public class QuestionFour {
         return node; // Return the root node
     }
 
+    /**
+     * Performs the ID3 algorithm by calling helper methods to build and print the decision tree.
+     */
     public static void performID3Algorithm() {
         List<String> remainingAttributes = new ArrayList<>(allAttributes);
+        // Run ID3 algorithm and build the decision tree
         TreeNode root = buildTree(allFileData, remainingAttributes);
         // Print the resulting tree
         System.out.println("\n--- Decision Tree Result ---");
         printTree(root, "");
     }
 
+    /**
+     * Main method that runs the program, which takes the data filename, stores the data, and calls the method to
+     * perform the ID3 algorithm.
+     * @param args: Command line arguments passed to the program.
+     */
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Error: One argument (data filename) must be passed to the program. Number of arguments passed: " + args.length);
