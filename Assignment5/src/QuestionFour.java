@@ -3,26 +3,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
-class AttributeSubset { // Ex. Math, Science
+/**
+ * Class that represents an attribute in the data file, such as Math or Science.
+ */
+class AttributeSubset {
     private final String attributeName;
     private final double informationGain;  // Information gain or entropy for child subset
-//    private final int attributeIndex;
-//    private final List<ChildSubset> childrenSubsets;
 
-//    // Constructor for leaf node (no children)
-//    public AttributeSubset(String attributeName, double informationGain, int attributeIndex) {
-//        this.attributeName = attributeName;
-//        this.informationGain = informationGain;
-//        this.attributeIndex = attributeIndex;
-//        this.childrenSubsets = null;  // No children for leaf nodes
-//    }
-
-    // Constructor for non-leaf nodes (with children)
     public AttributeSubset(String attributeName, double informationGain) {
         this.attributeName = attributeName;
         this.informationGain = informationGain;
-//        this.childrenSubsets = childrenSubsets;
-//        this.attributeIndex = attributeIndex;
     }
 
     public String getAttributeName() {
@@ -32,35 +22,11 @@ class AttributeSubset { // Ex. Math, Science
     public double getInformationGain() {
         return informationGain;
     }
-
-//    public int getAttributeIndex() {
-//        return attributeIndex;
-//    }
-//
-//    public List<ChildSubset> getChildrenSubsets() {
-//        return childrenSubsets;
-//    }
 }
 
-//class ChildSubset { // Ex. A, A+
-//    private final String attributeName;
-//    private final double entropy;
-//
-//    // Constructor for leaf node (no children)
-//    public ChildSubset(String attributeName, double entropy) {
-//        this.attributeName = attributeName;
-//        this.entropy = entropy;
-//    }
-//
-//    public String getAttributeName() {
-//        return attributeName;
-//    }
-//
-//    public double getEntropy() {
-//        return entropy;
-//    }
-//}
-
+/**
+ * Class that represents a node in the decision tree.
+ */
 class TreeNode {
     String attribute; // The attribute used to split data
     Map<String, TreeNode> children; // Children nodes, key is attribute value
@@ -121,16 +87,6 @@ public class QuestionFour {
         }
     }
 
-//    public static double calculateEntropy(double recordFraction) {
-//        // Base case: if fraction is 0, entropy is 0
-//        if (recordFraction == 0) {
-//            return 0;
-//        }
-//        // Calculate entropy: -p(x) log2 p(x)
-//        double logBase2Result = (Math.log(recordFraction) / Math.log(2));
-//        return -recordFraction * logBase2Result;
-//    }
-
     public static double calculateAverageChildrenEntropy(ArrayList<double[]> fractionEntropyPairs, double totalEntries) {
         double averageEntropy = 0.0;
 
@@ -183,7 +139,6 @@ public class QuestionFour {
         return entropy;
     }
 
-
     public static void printTree(TreeNode node, String prefix) {
         if (node.isLeaf()) {
             System.out.println(prefix + "Leaf: " + node.nodeType);
@@ -220,6 +175,7 @@ public class QuestionFour {
         System.out.println("\n--- Finding highest information gain ---");
         AttributeSubset highestSubset = subsets.getFirst();
         double highestInformationGain = highestSubset.getInformationGain();
+
         // Loop through all attributes
         for (AttributeSubset currentSubset : subsets) {
             System.out.println("Information gain of " + currentSubset.getAttributeName() + ": " + currentSubset.getInformationGain());
@@ -230,19 +186,8 @@ public class QuestionFour {
             }
         }
 
-        // Loop through all attributes except the boolean one
-//        for (int index = 0; index < subsets.size()-1; index++) {
-//            AttributeSubset currentSubset = subsets.get(index);
-//            System.out.println("Info gain of " + currentSubset.getAttributeName() + ": " + currentSubset.getInformationGain());
-//            if (currentSubset.getInformationGain() > highestInformationGain) {
-//                // Store new highest subset
-//                highestInformationGain = currentSubset.getInformationGain();
-//                highestSubset = currentSubset;
-//            }
-//        }
-
         System.out.println("Highest information gain is " + highestSubset.getAttributeName() + ": " + highestInformationGain + "\n");
-        // Return the entropy of the subset with the highest information gain, so it can become the next parent entropy
+        // Return the subset with the highest information gain, so it can become the next parent entropy
         return highestSubset;
     }
 
@@ -284,15 +229,6 @@ public class QuestionFour {
                 continue; // Skip the boolean attribute
             }
 
-//            if (attributeIndex != allAttributes.size()-1) {
-//                // Calculate the information gain for this attribute based on the subset data
-//                double informationGain = calculateInformationGain(subsetData, attributeIndex);
-//                System.out.println("Information Gain for " + attribute + ": " + informationGain + "\n");
-//
-//                // Store the result for this attribute
-//                AttributeSubset currentSubset = new AttributeSubset(attribute, informationGain, null, attributeIndex);
-//                parentEntropyOptions.add(currentSubset);
-//            }
             // Calculate the information gain for this attribute based on the subset data
             double informationGain = calculateInformationGain(subsetData, attributeIndex);
             System.out.println("Information Gain for " + attribute + ": " + informationGain + "\n");
@@ -311,7 +247,7 @@ public class QuestionFour {
 
         // Check if all examples have the same class label
         for (String[] record : data) {
-            String currentLabel = record[record.length - 1]; // Assuming class label is the last column
+            String currentLabel = record[record.length - 1];
             if (classLabel == null) {
                 classLabel = currentLabel;
             } else if (!classLabel.equals(currentLabel)) {
@@ -366,13 +302,13 @@ public class QuestionFour {
             return new TreeNode(majorityClass, true); // Leaf node
         }
 
-        // Step 1: Calculate the best attribute to split on
+        // Calculate the best attribute to split on
         AttributeSubset bestSubset = getNextSplitAttribute(data, attributes);
 
-        // Step 2: Create a new TreeNode with the best attribute
+        // Create a new TreeNode with the best attribute
         TreeNode node = new TreeNode(bestSubset.getAttributeName());
 
-        // Step 3: Recursively split the data and add child nodes
+        // Recursively split the data and add children nodes
         List<String> remainingAttributes = new ArrayList<>(attributes);
         remainingAttributes.remove(bestSubset.getAttributeName());
 
@@ -384,8 +320,6 @@ public class QuestionFour {
         for (Map.Entry<String, ArrayList<String[]>> entry : splitData.entrySet()) {
             String value = entry.getKey();
             ArrayList<String[]> childData = entry.getValue();
-            System.out.println("Recursively building tree, remaining attributes: " + remainingAttributes);
-
             TreeNode childNode = buildTree(childData, remainingAttributes);
             node.children.put(value, childNode); // Add the child node
         }
@@ -395,13 +329,17 @@ public class QuestionFour {
 
     public static void performID3Algorithm() {
         List<String> remainingAttributes = new ArrayList<>(allAttributes);
-//        remainingAttributes.removeLast();
         TreeNode root = buildTree(allFileData, remainingAttributes);
         // Print the resulting tree
+        System.out.println("\nDecision tree result:");
         printTree(root, "");
     }
 
     public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Error: One argument (data filename) must be passed to the program. Number of arguments passed: " + args.length);
+            return;
+        }
         String filename = args[0];
         storeFileData(filename);
         performID3Algorithm();
