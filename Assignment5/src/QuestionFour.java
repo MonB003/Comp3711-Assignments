@@ -341,6 +341,7 @@ public class QuestionFour {
         }
         String filename = args[0];
         storeFileData(filename);
+        System.out.println("Performing ID3 algorithm on dataset from: " + filename + "\n");
         performID3Algorithm();
     }
 }
