@@ -39,12 +39,20 @@ public class Forward_Propagation {
         return weights;
     }
 
-    public void printWeights() {
+    public void printWeightsAndBias() {
         System.out.print("Weights: ");
-        for (double currentWeight : weights) {
-            System.out.print(currentWeight + " ");
+//        for (double currentWeight : weights) {
+//            System.out.print(currentWeight + " ");
+//        }
+        for (int index = 0; index < weights.length; index++) {
+            double currentWeight = weights[index];
+            System.out.print(currentWeight);
+            if (index != weights.length-1) {
+                System.out.print(", ");
+            }
         }
         System.out.println();
+        System.out.println("Bias: " + bias);
     }
 
     public double[] generateInitialWeights() {
@@ -59,12 +67,32 @@ public class Forward_Propagation {
     public double calculatePropagationOutput(double[] inputs) {
         double outputSum = bias;
         for (int index = 0; index < inputs.length; index++) {
+            // Propagation is calculated by multiplying inputs by the weights
             outputSum += inputs[index] * weights[index];
         }
         return calculateSigmoidFunction(outputSum);
     }
 
     public double calculateSigmoidFunction(double number) {
+        // S(x) = 1 / (1+e^−x)
         return 1 / (1 + Math.exp(-number));
+    }
+
+    public double calculateSigmoidDerivative(double sigmoidNumber) {
+        return sigmoidNumber * (1 - sigmoidNumber);
+    }
+
+    public void updateWeightsAndBias(double[] input, double error) {
+        double learningRate = 0.05;
+
+        // Adjust the error using the derivative of the sigmoid
+        double sigmoidResult = calculatePropagationOutput(input);
+        double updatedErrorResult = error * calculateSigmoidDerivative(sigmoidResult);
+
+        // Update weights and bias
+        for (int index = 0; index < weights.length; index++) {
+            weights[index] += learningRate * updatedErrorResult * input[index];
+        }
+        bias = bias + (learningRate * updatedErrorResult);
     }
 }
