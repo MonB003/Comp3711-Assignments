@@ -39,6 +39,14 @@ public class Forward_Propagation {
         return weights;
     }
 
+    public void printWeights() {
+        System.out.print("Weights: ");
+        for (double currentWeight : weights) {
+            System.out.print(currentWeight + " ");
+        }
+        System.out.println();
+    }
+
     public double[] generateInitialWeights() {
         int inputSize = inputs[0].length;
         double[] initialWeights = new double[inputSize];

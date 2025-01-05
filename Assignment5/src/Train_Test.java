@@ -8,7 +8,11 @@ public class Train_Test {
                 updateWeightsAndBias(fProp.getInputs()[index], error);
             }
         }
+
+        // Print result values
         System.out.println("Perception has been trained.");
+        fProp.printWeights();
+        System.out.println("Bias: " + fProp.getBias());
     }
 
     public void updateWeightsAndBias(double[] input, double error) {
@@ -22,8 +26,16 @@ public class Train_Test {
     }
 
     public void runTest() {
+        System.out.println("--- Running a test ---");
         double[] testInput = {0, 0, 0};  // Test instance
+        System.out.print("Test input: ");
+        for (double value: testInput) {
+            System.out.print(value + " ");
+        }
+        System.out.println();
+
         double testResult = fProp.calculatePropagationOutput(testInput);
-        System.out.println("Test result: The instance is " + (testResult >= 0.5 ? "real" : "fake"));
+        System.out.println("Test result: " + testResult);
+        System.out.println("Based on the test result, the prediction is that the instance is " + (testResult >= 0.5 ? "real" : "fake"));
     }
 }

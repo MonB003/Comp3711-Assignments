@@ -225,7 +225,6 @@ public class QuestionFour {
         for (String attribute : remainingAttributes) {
             int attributeIndex = getAttributeIndex(attribute);
             if (attribute.equals(allAttributes.getLast())) {
-                System.out.println("SKIPPING " + attribute);
                 continue; // Skip the boolean attribute
             }
 
@@ -331,7 +330,7 @@ public class QuestionFour {
         List<String> remainingAttributes = new ArrayList<>(allAttributes);
         TreeNode root = buildTree(allFileData, remainingAttributes);
         // Print the resulting tree
-        System.out.println("\nDecision tree result:");
+        System.out.println("\n--- Decision Tree Result ---");
         printTree(root, "");
     }
 
