@@ -27,23 +27,8 @@ public class Forward_Propagation {
         return outputs;
     }
 
-    public double getBias() {
-        return bias;
-    }
-
-    public void setBias(double newBias) {
-        bias = newBias;
-    }
-
-    public double[] getWeights() {
-        return weights;
-    }
-
     public void printWeightsAndBias() {
         System.out.print("Weights: ");
-//        for (double currentWeight : weights) {
-//            System.out.print(currentWeight + " ");
-//        }
         for (int index = 0; index < weights.length; index++) {
             double currentWeight = weights[index];
             System.out.print(currentWeight);
@@ -52,7 +37,7 @@ public class Forward_Propagation {
             }
         }
         System.out.println();
-        System.out.println("Bias: " + bias);
+        System.out.println("Bias: " + bias + "\n");
     }
 
     public double[] generateInitialWeights() {
@@ -93,6 +78,6 @@ public class Forward_Propagation {
         for (int index = 0; index < weights.length; index++) {
             weights[index] += learningRate * updatedErrorResult * input[index];
         }
-        bias = bias + (learningRate * updatedErrorResult);
+        bias += (learningRate * updatedErrorResult);
     }
 }
